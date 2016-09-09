@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taocaiku.member.dao.MemberMapper">
+    
+    <select id="findByIds" parameterType="list" resultType="memberDO" >
+        SELECT * FROM MEMBER WHERE id IN
+        <foreach collection="list" open="("  close=")" index="index" item="item" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findByProperty" parameterType="memberDO" resultType="memberDO">
+        SELECT * FROM MEMBER
+        <where>
+            <if test="userName != null and userName != ''" >
+                user_name = #{userName}
+            </if>
+            <if test="mobile != null and mobile != ''" >
+                AND mobile = #{mobile}
+            </if>
+            <if test="weixinId != null and weixinId != ''" >
+                AND weixin_id = #{weixinId}
+            </if>
+            <if test="email != null and email != ''" >
+                AND email = #{email}
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="memberDO" >
+        UPDATE MEMBER
+        <set>
+            <if test="userName != null"> user_name = #{userName},</if>
+            <if test="realName != null"> real_name = #{realName},</if>
+            <if test="password != null"> password = #{password},</if>
+            <if test="avatar != null"> avatar = #{avatar},</if>
+            <if test="gender != null"> gender = #{gender},</if>
+            <if test="birthday != null"> birthday = #{birthday},</if>
+            <if test="mobile != null"> mobile = #{mobile},</if>
+            <if test="email != null"> email = #{email},</if>
+            <if test="weixinId != null">weixin_id = #{weixinId},</if>
+            <if test="provinceId != null">province_id = #{provinceId},</if>
+            <if test="cityId != null">city_id = #{cityId},</if>
+            <if test="countyId != null">county_id = #{countyId},</if>
+            <if test="features != null">features = #{features},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="gmtModified != null">gmt_modified = #{gmtModified}</if>
+        </set>
+        WHERE id =#{id}
+    </update>
+	
+	<!-- 根据名字模糊查询 -->
+	<select id="findByLikeName" parameterType="String" resultType="memberDO">
+	SELECT id FROM MEMBER WHERE user_name LIKE CONCAT('%',#{userName},'%') ORDER BY id
+	</select>
+
+</mapper>

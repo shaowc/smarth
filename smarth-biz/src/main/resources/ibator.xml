@@ -1,0 +1,19 @@
+<project>
+
+    <!--<datasource url="jdbc:mysql://localhost/manager?characterEncoding=utf-8" user="root" password="Chuanyuan2008" schema="manager" />-->
+    <datasource url="jdbc:mysql://localhost:3306/smarth?characterEncoding=utf-8" user="root" password="Chuanyuan2008" schema="smarth" />
+
+
+    <tables package="">
+        <table  name="CK_ITEM" prefix="Ck" comments="true" package="com.familyan.smarth.domain" />
+        <table  name="CK_PACKAGE" prefix="Ck" comments="true" package="com.familyan.smarth.domain" />
+        <table  name="CK_MEMBER_PACKAGE" prefix="Ck" comments="true" package="com.familyan.smarth.domain" />
+        <table  name="CK_ORDER" prefix="Ck" comments="true" package="com.familyan.smarth.domain" />
+        <table  name="MEMBER" prefix="" comments="true" package="com.familyan.smarth.domain" />
+        <table  name="MEMBER_CHECKUP_ADDRESS" prefix="" comments="true" package="com.familyan.smarth.domain" />
+        <table  name="XT_XZQH" prefix="" comments="true" package="com.familyan.smarth.domain" />
+
+    </tables>
+
+
+</project>
