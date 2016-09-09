@@ -34,7 +34,14 @@
        <bean id="wechatEngine" class="com.lotus.wechat.message.WechatEngine">
               <property name="functions">
                      <list>
+                            <bean class="com.familyan.smarth.function.SubscribeFunction">
+                                   <property name="welcome">
+                                          <list>
+                                                 <value>欢迎加入小马快检！</value>
+                                          </list>
+                                   </property>
 
+                            </bean>
 
                      </list>
               </property>

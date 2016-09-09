@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+       <context:property-placeholder location="classpath:server.properties"/>
+
+       <context:component-scan base-package="com.familyan.smarth.web.controller"/>
+
+       <!-- view -->
+       <bean id="velocityViewCache" class="com.lotus.core.cache.GuavaCache">
+              <constructor-arg name="name" value="velocity"/>
+              <constructor-arg name="size" value="10000"/>
+       </bean>
+       <bean id="velocityConfigurer"
+             class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+              <property name="resourceLoaderPath" value="WEB-INF/views/" />
+              <property name="velocityProperties">
+                     <map>
+                            <entry key="input.encoding" value="${web.encoding}" />
+                            <entry key="output.encoding" value="${web.encoding}" />
+                            <!-- cache directive 相关配置 -->
+                            <entry key="userdirective" value="com.nodewind.core.web.velocity.CacheDirective" />
+                            <!-- direcitive.cache.provider　配置cache的提供者 -->
+                            <entry key="direcitive.cache.provider" value-ref="velocityViewCache" />
+                            <!-- direcitive.cache.dev.mode 控制是否打开cache,如果是true,则关闭 -->
+                            <entry key="direcitive.cache.dev.mode" value="false" />
+
+                            <entry key="velocimacro.library" value="/macro/macro.vm"/>
+                            <entry key="velocimacro.library.autoreload" value="true" />
+                     </map>
+              </property>
+              <property name="configLocation" value="classpath:velocity.properties" />
+       </bean>
+
+       <bean id="viewResolver"
+             class="com.lotus.core.web.velocity.FixedVelocityLayoutViewResolver">
+              <property name="order" value="10" />
+              <property name="suffix" value=".vm" />
+              <property name="prefix" value="screen/" />
+              <property name="layoutUrl" value="layout/default.vm" />
+              <property name="exposeSpringMacroHelpers" value="true" />
+              <property name="dateToolAttribute" value="dateTool" />
+              <property name="numberToolAttribute" value="numberTool" />
+              <property name="toolboxConfigLocation" value="WEB-INF/velocity/vm-toolbox.xml" />
+              <property name="contentType" value="${web.contentType}" />
+              <property name="templateEncoding" value="${web.encoding}" />
+              <property name="exposeRequestAttributes" value="true" />
+              <property name="attributesMap" >
+                     <map>
+                            <entry key="appDomain" value="${app.domain}" />
+                            <entry key="topDomain" value="${top.domain}" />
+                     </map>
+              </property>
+       </bean>
+       <!-- 形成默认的view，执行render过程并输出正确的http状态，防止vm不存在是直接返回200 -->
+       <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+              <property name="order" value="100" />
+              <property name="prefix" value="/WEB-INF/views/screen/" />
+              <property name="suffix" value=".vm" />
+       </bean>
+
+       <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" >
+              <property name="order" value="0" />
+       </bean>
+       <bean id="lastHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+              <property name="order" value="999" />
+              <property name="defaultHandler">
+                     <!-- 没有Controller 方法时，直接去找对应的模板 -->
+                     <bean class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+              </property>
+       </bean>
+
+       <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+              <property name="order" value="0" />
+              <property name="messageConverters">
+                     <list>
+                            <bean class="org.springframework.http.converter.StringHttpMessageConverter" >
+                                   <property name="supportedMediaTypes">
+                                          <list>
+                                                 <bean class="org.springframework.http.MediaType">
+                                                        <constructor-arg index="0" value="text" />
+                                                        <constructor-arg index="1" value="plain" />
+                                                        <constructor-arg index="2" value="UTF-8" />
+                                                 </bean>
+                                          </list>
+                                   </property>
+                            </bean>
+                            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+                     </list>
+              </property>
+              <property name="customArgumentResolvers">
+                     <list>
+                            <!-- 只要在Method 中声明LoginMember 对象，框架自动注入,但有可能为null -->
+                            <bean class="com.lotus.core.web.cookyjar.CookyjarValueArgumentResolver">
+                                   <property name="clazz" value="com.familyan.smarth.domain.LoginMember" />
+                            </bean>
+                            <bean class="com.lotus.core.web.cookyjar.CookyjarValueArgumentResolver" >
+                                   <property name="clazz" value="com.lotus.wechat.WechatOpenId" />
+                            </bean>
+                            <!-- 只要在method声明Cookyjar对象,则自动注入 -->
+                            <bean class="com.lotus.core.web.cookyjar.CookyjarValueArgumentResolver"/>
+
+
+                     </list>
+              </property>
+              <!-- 支持在Controller 方法中使用 @Valid 自动验证 -->
+              <property name="webBindingInitializer" >
+                     <bean class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+                            <property name="validator" ref="validator" />
+                     </bean>
+              </property>
+
+       </bean>
+       <!-- 和SimpleUrlHandlerMapping 一起保证没有Controller方法的VM 可以输出 -->
+       <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+
+
+       <!-- 文件上传解析-->
+       <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+              <property name="defaultEncoding" value="${web.encoding}" />
+              <!-- 10M -->
+              <property name="maxUploadSize" value="10485760" />
+       </bean>
+
+       <!-- 自动验证的实现 -->
+       <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+              <property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+              <!-- 如果不加默认到 使用classpath下的 ValidationMessages.properties -->
+              <property name="validationMessageSource" ref="messageSource" />
+       </bean>
+       <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+              <property name="basenames">
+                     <list>
+                            <!-- 在web环境中一定要定位到classpath 否则默认到当前web应用下找  -->
+                            <value>classpath:message/message</value>
+                            <value>classpath:org/hibernate/validator/ValidationMessages</value>
+                     </list>
+              </property>
+              <property name="cacheSeconds" value="60" />
+              <!-- 这个配置有可能错误, 看IDE，IDEA 在windwos 下默认GBK -->
+              <property name="defaultEncoding" value="UTF-8" />
+       </bean>
+
+       <mvc:interceptors>
+              <bean class="com.lotus.core.web.control.ControlHandlerInterceptor" />
+              <!-- 微信自动登录 -->
+              <mvc:interceptor>
+                     <mvc:mapping path="/**" />
+                     <mvc:exclude-mapping path="/wechat/*" />
+                     <mvc:exclude-mapping path="/wechatPay/*" />
+                     <mvc:exclude-mapping path="/error.htm" />
+                     <mvc:exclude-mapping path="/check.htm" />
+                     <mvc:exclude-mapping path="/404.htm" />
+                     <bean class="com.lotus.wechat.WechatInterceptor">
+                            <property name="api" ref="wechatApi" />
+                            <property name="redirectUrl" value="${weixin.redirectUrl}" />
+                     </bean>
+              </mvc:interceptor>
+              <!-- 需要登录页面的账号验证  -->
+              <bean class="com.familyan.smarth.web.interceptor.MemberLoginInterceptor" >
+                     <property name="clazz" value="com.familyan.smarth.domain.LoginMember" />
+                     <property name="exposeToAttr" value="true" />
+              </bean>
+       </mvc:interceptors>
+
+       <!-- exception resolver -->
+       <bean class="com.lotus.core.web.security.SecurityExceptionResolver">
+              <property name="webEncoding" value="${web.encoding}" />
+              <property name="order" value="1" />
+              <property name="loginPath" value="${login.url}" />
+              <property name="noPermissionPath" value="${login.url}" />
+              <property name="returnUrlName" value="url" />
+       </bean>
+       <bean class="org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver">
+              <property name="order" value="100"/>
+       </bean>
+       <bean class="com.lotus.core.web.exception.PrintStackExceptionResolver">
+              <property name="order" value="200"/>
+              <property name="defaultStatusCode" value="200" />
+              <property name="defaultErrorView" value="error"/>
+              <property name="showStack" value="${exception.show}" />
+              <property name="stackAttributeName" value="stack" />
+       </bean>
+</beans>

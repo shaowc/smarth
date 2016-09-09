@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:property-placeholder location="classpath:server.properties"/>
+
+    <bean id="encodingFilterBean" class="org.springframework.web.filter.CharacterEncodingFilter">
+        <property name="encoding" value="${web.encoding}"/>
+        <property name="forceEncoding" value="false"/>
+    </bean>
+
+    <bean id="remoteAddrFilterBean" class="com.lotus.core.web.filter.RemoteAddrFilter" />
+
+    <bean id="jsonpFilterBean" class="com.lotus.core.web.filter.JsonpFilter"/>
+
+    <bean id="responseOutputBufferFilterBean" class="com.lotus.core.web.filter.ResponseOutputBufferFilter">
+        <property name="outCharset" value="${web.encoding}"/>
+    </bean>
+
+    <bean id="platformFilterBean" class="com.lotus.core.web.filter.PlatformFilter" />
+
+    <!-- cookyjar 配置 , 用于登录状态维护 -->
+    <bean id="cookieCrypto" class="com.lotus.core.util.crypto.impl.AESCryptoImpl">
+          <property name="key" value="${cookie.aes.key}"/>
+          <property name="ivParameter" value="${cookie.aes.iv}"/>
+    </bean>
+
+    <bean id="cookyjarConfigure" class="com.lotus.core.web.cookyjar.CookyjarConfigure">
+          <!-- cookie缺省配置 -->
+          <property name="defaultConfigure">
+                 <bean class="com.lotus.core.web.cookyjar.CookieConfigure">
+                        <property name="path" value="/" />
+                        <property name="lifeTime" value="-1" />
+                        <property name="domain" value=".${app.domain}" />
+                        <property name="httpOnly" value="true" />
+                 </bean>
+          </property>
+          <property name="configures">
+                 <list>
+                        <bean class="com.lotus.core.web.cookyjar.CookieConfigure">
+                               <property name="name" value="_loginMember" />
+                               <property name="domain" value=".${top.domain}" />
+                               <property name="clientName" value="andriodKey" />
+                               <property name="crypto" ref="cookieCrypto" />
+                               <property name="randomChar" value="4" />
+                               <property name="writableClass" value="com.taocaiku.member.sso.domain.LoginMember"/>
+                        </bean>
+                     <bean class="com.lotus.core.web.cookyjar.CookieConfigure" >
+                         <property name="clientName" value="_oid" />
+                         <property name="domain" value="${app.domain}" />
+                         <property name="name" value="openId" />
+                         <property name="crypto" ref="cookieCrypto" />
+                         <property name="randomChar" value="2" />
+                         <property name="writableClass" value="com.taocaiku.mobile.wechat.WechatOpenId" />
+                     </bean>
+
+                 </list>
+          </property>
+    </bean>
+
+    <bean id="cookyjarFilterBean" class="com.lotus.core.web.cookyjar.CookyjarFilter">
+          <property name="cookyjarConfigure" ref="cookyjarConfigure" />
+    </bean>
+
+
+    <bean id="staticServer" class="com.lotus.core.web.url.MultiServerURLBroker">
+        <constructor-arg name="servers">
+            <list>
+                <value>${static.cdn1}</value>
+                <value>${static.cdn2}</value>
+                <value>${static.cdn3}</value>
+                <value>${static.cdn4}</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg name="name" value="staticServer" />
+        <property name="useVersion" value="true" />
+        <property name="version" value="${static.version}" />
+    </bean>
+
+    <bean id="imgServer" class="com.lotus.core.web.url.MultiServerURLBroker">
+        <constructor-arg name="servers">
+            <list>
+                <value>${img.cdn1}</value>
+                <value>${img.cdn2}</value>
+                <value>${img.cdn3}</value>
+                <value>${img.cdn4}</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg name="name" value="imgServer" />
+    </bean>
+
+</beans>

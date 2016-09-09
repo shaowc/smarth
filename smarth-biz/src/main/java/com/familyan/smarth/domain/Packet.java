@@ -3,7 +3,7 @@ package com.familyan.smarth.domain;
 /**
  * Created by ibator.
  */
-public class PacketDO {
+public class Packet {
 
     /**
      * 

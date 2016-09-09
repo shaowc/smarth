@@ -1,12 +1,15 @@
 package com.familyan.smarth.domain;
 
+import java.io.Serializable;
+
 /**
- * Created by ibator.
+ * Created by shaowenchao on 16/9/9.
  */
-public class Order {
+public class OrderDTO implements Serializable {
+    private static final long serialVersionUID = -7724131053105173973L;
 
     /**
-     * 
+     *
      *
      */
     private Integer id;
@@ -42,25 +45,25 @@ public class Order {
     private java.util.Date checkupTime;
 
     /**
-     * 
+     *
      *
      */
     private Integer provinceId;
 
     /**
-     * 
+     *
      *
      */
     private Integer cityId;
 
     /**
-     * 
+     *
      *
      */
     private Integer countyId;
 
     /**
-     * 
+     *
      *
      */
     private String address;
@@ -80,19 +83,19 @@ public class Order {
     private String prepayId;
 
     /**
-     * 
+     *
      *
      */
     private java.util.Date gmtPrepayIdValid;
 
     /**
-     * 
+     *
      *
      */
     private java.util.Date gmtCreate;
 
     /**
-     * 
+     *
      *
      * 默认值：CURRENT_TIMESTAMP
      */
@@ -226,6 +229,4 @@ public class Order {
     public void setGmtModify(java.util.Date gmtModify) {
         this.gmtModify = gmtModify;
     }
-
 }
-

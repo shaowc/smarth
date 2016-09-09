@@ -1,0 +1,48 @@
+package com.familyan.smarth.manager.impl;
+
+import com.familyan.smarth.dao.OrderDao;
+import com.familyan.smarth.domain.Order;
+import com.familyan.smarth.domain.OrderDTO;
+import com.familyan.smarth.manager.OrderManager;
+import com.lotus.service.result.PageResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Created by shaowenchao on 16/9/9.
+ */
+@Service
+public class OrderManagerImpl implements OrderManager {
+
+    @Autowired
+    private OrderDao orderDao;
+
+    @Override
+    public PageResult<List<Order>> findByPage(OrderDTO order, Integer start, Integer limit, String orderBy) {
+        int total = orderDao.countByParams(order);
+        if (total == 0) {
+            return PageResult.emptyResult(Collections.<Order>emptyList());
+        }
+
+        List<Order> data = orderDao.findByParams(order, start, limit, orderBy);
+        return new PageResult<>(start, limit, total, data);
+    }
+
+    @Override
+    public Order findById(Integer id) {
+        return orderDao.findById(id);
+    }
+
+    @Override
+    public void add(Order order) {
+        orderDao.insert(order);
+    }
+
+    @Override
+    public void modify(Order order) {
+        orderDao.update(order);
+    }
+}

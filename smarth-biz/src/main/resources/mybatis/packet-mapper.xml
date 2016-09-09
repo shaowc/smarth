@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.familyan.smarth.dao.PacketDao">
+
+    <update id="update" parameterType="packet" >
+        UPDATE CK_PACKET
+        <set>
+            <if test="name != null"> name = #{name},</if>
+            <if test="description != null"> description = #{description},</if>
+            <if test="price != null"> price = #{price},</if>
+        </set>
+        WHERE id =#{id}
+    </update>
+	
+	<!-- 根据名字模糊查询 -->
+	<select id="findByParams" resultType="packet">
+	    SELECT * FROM CK_PACKET WHERE 1
+	    <include refid="findByParamsInclude" />
+        <if test="orderBy != null">ORDER BY #{orderBy}</if>
+        LIMIT #{start}, #{limit}
+	</select>
+
+    <sql id="findByParamsInclude" >
+        <if test="params != null">
+            <if test="params.name !=null and params.name !=''">AND name LIKE CONCAT('%', #{params.name}, '%')</if>
+        </if>
+    </sql>
+</mapper>

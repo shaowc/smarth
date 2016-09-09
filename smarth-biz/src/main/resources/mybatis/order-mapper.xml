@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.familyan.smarth.dao.OrderDao">
+
+    <update id="update" parameterType="order" >
+        UPDATE CK_ORDER
+        <set>
+            <if test="status != null"> status = #{status},</if>
+            <if test="outTradeNo != null"> out_trade_no = #{outTradeNo},</if>
+            <if test="prepayId != null"> prepay_id = #{prepayId},</if>
+            <if test="gmtPrepayIdValid != null"> gmt_prepay_id_valid = #{gmtPrepayIdValid},</if>
+        </set>
+        WHERE id =#{id}
+    </update>
+
+
+    <!-- 根据名字模糊查询 -->
+    <select id="countByParams" resultType="_int">
+        SELECT COUNT(1) FROM CK_ORDER WHERE 1
+        <include refid="findByParamsInclude" />
+    </select>
+	
+	<select id="findByParams" resultType="order">
+	    SELECT * FROM CK_ORDER WHERE 1
+	    <include refid="findByParamsInclude" />
+        <if test="orderBy != null">ORDER BY #{orderBy}</if>
+        LIMIT #{start}, #{limit}
+	</select>
+
+    <sql id="findByParamsInclude" >
+        <if test="params != null">
+            <if test="params.status !=null">AND status = #{params.status}</if>
+            <if test="params.memberId !=null">AND member_id = #{params.memberId}</if>
+            <if test="params.checkerId !=null">AND checker_id = #{params.checkerId}</if>
+            <if test="params.packetId !=null">AND packet_id = #{params.packetId}</if>
+        </if>
+    </sql>
+</mapper>

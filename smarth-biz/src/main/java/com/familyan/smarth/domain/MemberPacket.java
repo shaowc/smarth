@@ -21,7 +21,7 @@ public class MemberPacket {
      * 检手会员ID
      *
      */
-    private Integer memberId;
+    private Long memberId;
 
     /**
      * 状态，0：未支付，1：已支付，-1：已删除
@@ -60,11 +60,11 @@ public class MemberPacket {
         this.packetId = packetId;
     }
 
-    public Integer getMemberId() {
+    public Long getMemberId() {
         return memberId;
     }
 
-    public void setMemberId(Integer memberId) {
+    public void setMemberId(Long memberId) {
         this.memberId = memberId;
     }
 

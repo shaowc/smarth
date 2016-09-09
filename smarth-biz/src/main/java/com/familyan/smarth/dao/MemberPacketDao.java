@@ -2,6 +2,7 @@ package com.familyan.smarth.dao;
 
 import com.familyan.smarth.domain.MemberPacket;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -20,10 +21,16 @@ public interface MemberPacketDao {
     MemberPacket findByIds(List<Integer> ids);
 
     @Insert("INSERT INTO CK_MEMBER_PACKET (id, packet_id, member_id, status, gmt_create, gmt_modify ) " +
-            "VALUES (#{id}, #{packetId}, #{memberId}, #{status}, #{gmtCreate}, #{gmtModify} )")
+            "VALUES (#{id}, #{packetId}, #{memberId}, #{status}, now(), #{gmtModify} )")
     int insert(MemberPacket memberPacket);
 
+    @Select("SELECT COUNT(1) FROM CK_MEMBER_PACKET WHERE member_id=#{memberId} AND packet_id=#{packetId}")
+    int countByMemberIdAndPacketId(@Param("memberId")Long memberId, @Param("packetId")Integer packetId);
+
     int update(MemberPacket memberPacket);
+
+    @Select("SELECT * FROM CK_MEMBER_PACKET WHERE member_id=#{memberId}")
+    List<MemberPacket> findByMemberId(Long memberId);
 
 
 }
