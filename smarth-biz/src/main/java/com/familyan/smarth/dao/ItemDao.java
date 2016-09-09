@@ -19,8 +19,8 @@ public interface ItemDao {
             "</script>")
     Item findByIds(List<Integer> ids);
 
-    @Insert("INSERT INTO CK_ITEM (id, package_id, name, gmt_create, gmt_modify ) " +
-            "VALUES (#{id}, #{packageId}, #{name}, #{gmtCreate}, #{gmtModify} )")
+    @Insert("INSERT INTO CK_ITEM (id, packet_id, name, gmt_create, gmt_modify ) " +
+            "VALUES (#{id}, #{packetId}, #{name}, #{gmtCreate}, #{gmtModify} )")
     int insert(Item item);
 
     int update(Item item);

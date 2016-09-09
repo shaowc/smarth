@@ -3,7 +3,7 @@ package com.familyan.smarth.domain;
 /**
  * Created by ibator.
  */
-public class MemberPackage {
+public class MemberPacket {
 
     /**
      * 
@@ -15,7 +15,7 @@ public class MemberPackage {
      * 
      *
      */
-    private Integer packageId;
+    private Integer packetId;
 
     /**
      * 检手会员ID
@@ -52,12 +52,12 @@ public class MemberPackage {
         this.id = id;
     }
 
-    public Integer getPackageId() {
-        return packageId;
+    public Integer getPacketId() {
+        return packetId;
     }
 
-    public void setPackageId(Integer packageId) {
-        this.packageId = packageId;
+    public void setPacketId(Integer packetId) {
+        this.packetId = packetId;
     }
 
     public Integer getMemberId() {

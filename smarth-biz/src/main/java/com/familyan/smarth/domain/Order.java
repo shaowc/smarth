@@ -27,7 +27,7 @@ public class Order {
      * 体检包ID
      *
      */
-    private Integer packageId;
+    private Integer packetId;
 
     /**
      * 购买时体检包内容
@@ -121,12 +121,12 @@ public class Order {
         this.checkerId = checkerId;
     }
 
-    public Integer getPackageId() {
-        return packageId;
+    public Integer getPacketId() {
+        return packetId;
     }
 
-    public void setPackageId(Integer packageId) {
-        this.packageId = packageId;
+    public void setPacketId(Integer packetId) {
+        this.packetId = packetId;
     }
 
     public String getPackageContent() {

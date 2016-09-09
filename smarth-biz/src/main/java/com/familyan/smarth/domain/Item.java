@@ -15,7 +15,7 @@ public class Item {
      * 体检包ID
      *
      */
-    private Integer packageId;
+    private Integer packetId;
 
     /**
      * 体检项目名称
@@ -45,12 +45,12 @@ public class Item {
         this.id = id;
     }
 
-    public Integer getPackageId() {
-        return packageId;
+    public Integer getPacketId() {
+        return packetId;
     }
 
-    public void setPackageId(Integer packageId) {
-        this.packageId = packageId;
+    public void setPacketId(Integer packetId) {
+        this.packetId = packetId;
     }
 
     public String getName() {
