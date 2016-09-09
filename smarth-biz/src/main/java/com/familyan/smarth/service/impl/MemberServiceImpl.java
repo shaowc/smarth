@@ -1,5 +1,6 @@
 package com.familyan.smarth.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.familyan.smarth.constants.BindType;
 import com.familyan.smarth.domain.Member;
 import com.familyan.smarth.domain.MemberDTO;
@@ -20,6 +21,7 @@ import java.util.*;
 /**
  * Created by shaowenchao on 16/9/8.
  */
+@Service
 public class MemberServiceImpl implements MemberService {
 
     @Autowired

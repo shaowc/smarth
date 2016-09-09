@@ -46,7 +46,7 @@
                                <property name="clientName" value="andriodKey" />
                                <property name="crypto" ref="cookieCrypto" />
                                <property name="randomChar" value="4" />
-                               <property name="writableClass" value="com.taocaiku.member.sso.domain.LoginMember"/>
+                               <property name="writableClass" value="com.familyan.smarth.domain.LoginMember"/>
                         </bean>
                      <bean class="com.lotus.core.web.cookyjar.CookieConfigure" >
                          <property name="clientName" value="_oid" />
@@ -54,7 +54,7 @@
                          <property name="name" value="openId" />
                          <property name="crypto" ref="cookieCrypto" />
                          <property name="randomChar" value="2" />
-                         <property name="writableClass" value="com.taocaiku.mobile.wechat.WechatOpenId" />
+                         <property name="writableClass" value="com.lotus.wechat.WechatOpenId" />
                      </bean>
 
                  </list>

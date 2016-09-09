@@ -26,6 +26,51 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>${parent.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <uriEncoding>UTF-8</uriEncoding>
+                    <port>8080</port>
+                    <path>/</path>
+                </configuration>
 
+            </plugin>
+
+            <!-- 打包插件， 便于部署 -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.5</version>
+                <configuration>
+                    <descriptors>
+                        <!-- 指定描述文件 -->
+                        <descriptor>../assembly.xml</descriptor>
+                    </descriptors>
+                    <!-- 输出文件一定要放到项目根目录的target 目录下,
+                        当前此插件在web子模块执行,其parent 才是项目根目录  -->
+                    <outputDirectory>${project.parent.build.directory}</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>packaging</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

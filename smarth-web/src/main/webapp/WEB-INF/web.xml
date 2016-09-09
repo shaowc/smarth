@@ -65,7 +65,7 @@
 
 	<filter>
 		<filter-name>noSessionFilter</filter-name>
-		<filter-class>com.nodewind.core.web.filter.NoSessionFilter</filter-class>
+		<filter-class>com.lotus.core.web.filter.NoSessionFilter</filter-class>
 	</filter>
 
 	<filter>

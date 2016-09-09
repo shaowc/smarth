@@ -9,6 +9,7 @@
               <property name="state" value="haggle" />
        </bean>
 
+       <!--
        <bean id="wechatPayApi" class="com.lotus.wechat.pay.WechatPayApiImpl">
               <constructor-arg index="0" value="${weixin.appId}" />
               <constructor-arg index="1" value="${weixin.pay.mchId}" />
@@ -17,19 +18,7 @@
               <property name="mchName" value="${weixin.mch.name}" />
               <property name="serverIp" value="${server.ip}" />
        </bean>
-
-       <!--<bean id="article" class="com.taocaiku.mobile.wechat.kf.NewsKfMessage.Article">-->
-              <!--<property name="title" value="箭牌马桶AB1178特供599元！箭牌有史最低价！"/>-->
-              <!--<property name="description" value="实体店3032元，天猫活动价799元，“老叶专享价”超低599元实体店供货包送货！限200套！"/>-->
-              <!--<property name="url" value="http://kan.taocaiku.com/sp/detail/4.htm"/>-->
-              <!--<property name="picurl" value="http://mmbiz.qpic.cn/mmbiz/k8xYvgEfI4IkEAXhfDhxxLic51ENQJRia3vvZpxT1G14fKDfFgEkBHSJhnQj9GptGogYMnZscrXpFQw9FQ4V69dQ/0?wx_fmt=jpeg" />-->
-       <!--</bean>-->
-       <!--<bean id="article2" class="com.taocaiku.mobile.wechat.kf.NewsKfMessage.Article">-->
-              <!--<property name="title" value="箭牌AB1208“老叶价”799元全包到家！箭牌有史最低价！"/>-->
-              <!--<property name="description" value="实体店3491元，天猫京东活动价999元，“老叶专享价”799元实体店供货包安装配件送货！限200套！"/>-->
-              <!--<property name="url" value="http://kan.taocaiku.com/sp/detail/3.htm"/>-->
-              <!--<property name="picurl" value="http://mmbiz.qpic.cn/mmbiz/k8xYvgEfI4IkEAXhfDhxxLic51ENQJRia3HHS5p4G3TNsyRWMS7F7PPMZAlbGO0iaGlXWd2wJzyTJVhjrpEfxVgtw/0?wx_fmt=jpeg" />-->
-       <!--</bean>-->
+       -->
 
        <bean id="wechatEngine" class="com.lotus.wechat.message.WechatEngine">
               <property name="functions">

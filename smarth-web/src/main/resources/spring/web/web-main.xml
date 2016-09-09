@@ -22,9 +22,9 @@
                             <entry key="input.encoding" value="${web.encoding}" />
                             <entry key="output.encoding" value="${web.encoding}" />
                             <!-- cache directive 相关配置 -->
-                            <entry key="userdirective" value="com.nodewind.core.web.velocity.CacheDirective" />
+                            <!--<entry key="userdirective" value="com.lotus.core.we" />-->
                             <!-- direcitive.cache.provider　配置cache的提供者 -->
-                            <entry key="direcitive.cache.provider" value-ref="velocityViewCache" />
+                            <!--<entry key="direcitive.cache.provider" value-ref="velocityViewCache" />-->
                             <!-- direcitive.cache.dev.mode 控制是否打开cache,如果是true,则关闭 -->
                             <entry key="direcitive.cache.dev.mode" value="false" />
 
@@ -101,7 +101,7 @@
                                    <property name="clazz" value="com.lotus.wechat.WechatOpenId" />
                             </bean>
                             <!-- 只要在method声明Cookyjar对象,则自动注入 -->
-                            <bean class="com.lotus.core.web.cookyjar.CookyjarValueArgumentResolver"/>
+                            <bean class="com.lotus.core.web.cookyjar.CookjarArgumentResolver"/>
 
 
                      </list>

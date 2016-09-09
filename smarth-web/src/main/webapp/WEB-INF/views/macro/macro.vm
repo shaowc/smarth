@@ -1,0 +1,12 @@
+#macro ( direct $direct-output )$!direct-output#end
+
+## 显示金额
+## 示例
+## #currency(101) -> ￥1.01  #currency(101 ,'#') -> 1
+## #currency(0) -> ￥0.00
+## #currency(101) -> ￥1.01
+## #currency(101 ,'#') -> 1
+## #currency(101 ,'#.#') -> 1.0
+## #currency(101 ,'#.##') -> 1.01
+## 注意格式参数用 单引号
+#macro( currency $value,$format)#if($value)#set($r = $value / 100.00)#if($format)$numberTool.format($format,$r)#else $numberTool.currency($r) #end#else 0#end#end

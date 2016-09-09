@@ -9,7 +9,7 @@
         </foreach>
     </select>
 
-    <select id="findByProperty" parameterType="memberDO" resultType="member">
+    <select id="findByProperty" parameterType="member" resultType="member">
         SELECT * FROM MEMBER
         <where>
             <if test="userName != null and userName != ''" >
