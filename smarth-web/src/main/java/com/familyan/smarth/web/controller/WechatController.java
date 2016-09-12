@@ -133,7 +133,7 @@ public class WechatController {
     @ResponseBody
     public String response(String signature, String timestamp, String nonce, HttpServletRequest request) {
         try {
-            String xml = IOUtils.toString(request.getInputStream());
+            String xml = IOUtils.toString(request.getInputStream(), "UTF-8");
             return engine.onMessage(xml);
         } catch (WechatException | IOException e) {
             log.error(e);
