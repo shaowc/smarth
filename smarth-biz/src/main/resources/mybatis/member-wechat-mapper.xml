@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.familyan.smarth.dao.MemberWechatDao">
+
+    <update id="updateById" parameterType="memberWechatDO">
+        UPDATE MEMBER_WECHAT
+        <trim prefix="set" suffixOverrides=",">
+            <if test="memberId != null" >member_id = #{memberId},</if>
+            <if test="subscribe != null" >subscribe = #{subscribe},</if>
+            <if test="nickName != null" >nick_name = #{nickName},</if>
+            <if test="sex != null" >sex = #{sex},</if>
+            <if test="city != null" >city = #{city},</if>
+            <if test="province != null" >province = #{province},</if>
+            <if test="country != null" >country = #{country},</if>
+            <if test="language != null" >`language` = #{language},</if>
+            <if test="headImgUrl != null" >head_img_url = #{headImgUrl},</if>
+            <if test="subscribeTime != null" >subscribe_time = #{subscribeTime},</if>
+            <if test="remark != null" >remark = #{remark},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByOpenIds" resultType="memberWechatDO">
+        SELECT * FROM MEMBER_WECHAT WHERE `app` = #{app} and `open_id` IN
+        <foreach collection="openIds" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

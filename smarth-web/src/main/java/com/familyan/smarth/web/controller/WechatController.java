@@ -2,11 +2,13 @@ package com.familyan.smarth.web.controller;
 
 import com.familyan.smarth.constants.BindType;
 import com.familyan.smarth.domain.LoginMember;
+import com.familyan.smarth.domain.Member;
 import com.familyan.smarth.domain.MemberDTO;
 import com.familyan.smarth.domain.MemberWechatDTO;
 import com.familyan.smarth.manager.MemberWechatManager;
 import com.familyan.smarth.service.MemberService;
 import com.familyan.smarth.service.MemberWechatService;
+import com.lotus.core.util.TransferUtil;
 import com.lotus.core.web.cookyjar.Cookyjar;
 import com.lotus.wechat.WechatApi;
 import com.lotus.wechat.WechatException;
@@ -29,8 +31,8 @@ import java.io.IOException;
 /**
  * Created by shaowenchao on 16/9/9.
  */
-@RequestMapping
-@Controller("wechat")
+@RequestMapping("wechat")
+@Controller
 public class WechatController {
 
 
@@ -50,6 +52,7 @@ public class WechatController {
 
     /**
      * 微信获取code 之后跳转的页面，按code 获取对于的unionId, 并找出绑定的账号进行登录
+     * 如果未找到绑定的用户，自动注册，并绑定unionId
      *
      * @param url
      * @param code
@@ -70,29 +73,22 @@ public class WechatController {
                 openId = new WechatOpenId();
 
                 openId.setOpenId(accessToken.getOpenId());
+                // 获取用户信息
+                WechatUserInfo info = api.userInfo(accessToken.getAccessToken(), accessToken.getOpenId());
+                //WechatUserInfo info = api.userInfo( accessToken.getOpenId());
 
-                WechatUserInfo info = api.userInfo(accessToken.getOpenId());
                 openId.setSubscribe(info.getSubscribe());
                 openId.setUnionId(info.getUnionId());
-                if (info.getSubscribe() == 1) {
-                    openId.setNickName(info.getNickName());
-                }
+                openId.setNickName(info.getNickName());
 
-                cookyjar.set(openId , 3600);
+                cookyjar.set(openId , 60);
 
-                // 如果有相应的账号，自动登录掉
+                // 是否注册
+                MemberWechatDTO memberWechatDTO = saveAndGet(info);
+                // 自动登录掉
                 try {
 
                     MemberDTO member = memberService.loginNoPassword(BindType.WEIXIN, openId.getUnionId());
-                    if (member == null) {
-                        //用openId 查关联的用户
-                        MemberWechatDTO wechatDTO = wechatService.findByOpenId("smarth", openId.getOpenId());
-                        if (wechatDTO != null && wechatDTO.getMemberId() != null) {
-                            member = memberService.findById(wechatDTO.getMemberId());
-                            //默认userName登录
-                            memberService.loginNoPassword(BindType.USER_NAME, member.getUserName());
-                        }
-                    }
                     if (member != null) {
                         loginMember = new LoginMember();
                         loginMember.setFeatures(member.getFeatures());
@@ -108,6 +104,7 @@ public class WechatController {
                 }
                 return "redirect:" + url;
             } catch (WechatException e) {
+                cookyjar.remove(WechatOpenId.class);
                 result.put("msg", e.getMessage());
                 return "forward:/error.htm";
             }
@@ -144,5 +141,30 @@ public class WechatController {
         return "";
     }
 
+
+    private MemberWechatDTO saveAndGet(WechatUserInfo info) throws WechatException {
+        log.info(info.getUnionId());
+        //用户是否注册, 没注册, 自动注册
+        MemberDTO memberDTO = memberService.findByBindType(BindType.WEIXIN, info.getUnionId());
+        if(null == memberDTO){
+            MemberDTO newMemberDto = new MemberDTO();
+            //newMemberDto.setPassword("123456");
+            newMemberDto.setGender(info.getSex());
+            newMemberDto.setRealName(info.getNickName());
+            newMemberDto.setWeixinId(info.getUnionId());
+            log.info(newMemberDto.getWeixinId());
+            memberDTO = memberService.regMember(BindType.WEIXIN,newMemberDto);
+
+            // 新增，避免覆盖subscribe信息
+            MemberWechatDTO wechatDTO = TransferUtil.transfer(info, new MemberWechatDTO());
+            wechatDTO.setApp("smarth");
+            wechatDTO.setMemberId(memberDTO.getId());
+
+            return wechatService.save(wechatDTO);
+        }
+
+        return null;
+
+    }
 
 }

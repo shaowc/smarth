@@ -10,7 +10,7 @@ public interface MemberDao {
 
 
     @Insert("INSERT INTO MEMBER (id, user_name, real_name, password, avatar, gender, birthday, mobile, email, weixin_id, province_id, city_id, county_id, longitude, latitude, features, status, gmt_create, gmt_modified ) " +
-            "VALUES (#{id}, #{userName}, #{realName}, #{password}, #{avatar}, #{gender}, #{birthday}, #{mobile}, #{email}, #{weixinId}, #{provinceId}, #{cityId}, #{countyId}, #{longitude}, #{latitude}, #{features}, #{status}, #{gmtCreate}, #{gmtModified} )")
+            "VALUES (#{id}, #{userName}, #{realName}, #{password}, #{avatar}, #{gender}, #{birthday}, #{mobile}, #{email}, #{weixinId}, #{provinceId}, #{cityId}, #{countyId}, #{longitude}, #{latitude}, #{features}, #{status}, now(), #{gmtModified} )")
     int insert(Member member);
 
     @Select("SELECT * FROM MEMBER WHERE id = #{id}")

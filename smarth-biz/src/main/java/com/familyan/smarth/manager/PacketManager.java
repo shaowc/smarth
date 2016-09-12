@@ -1,7 +1,7 @@
 package com.familyan.smarth.manager;
 
-import com.familyan.smarth.domain.Item;
 import com.familyan.smarth.domain.Packet;
+import com.familyan.smarth.domain.PacketDTO;
 import com.lotus.service.result.PageResult;
 
 import java.util.List;
@@ -15,18 +15,16 @@ public interface PacketManager {
      * 添加体检包
      * 添加基本信息，添加体检项目
      * @param packet
-     * @param items
      */
-    void add(Packet packet, List<Item> items);
+    void add(Packet packet);
 
     /**
      * 修改体检包
      * 修改基本信息
      * 删除旧的体检项目，增加新的体检项目
      * @param packet
-     * @param items
      */
-    void modify(Packet packet, List<Item> items);
+    void modify(Packet packet);
 
     /**
      * 按用户ID查找体检包，我的体检包
@@ -46,9 +44,9 @@ public interface PacketManager {
      * @param memberId
      * @param packetId
      */
-    void buy(Long memberId, Integer packetId);
+    int buy(Long memberId, Integer packetId);
 
-    PageResult<List<Packet>> findByPage(Packet packet, Integer start, Integer limit, String orderBy);
+    PageResult<List<Packet>> findByPage(PacketDTO packet, Integer start, Integer limit, String orderBy);
 
 
 }

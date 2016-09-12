@@ -4,7 +4,6 @@ import com.familyan.smarth.constants.BindType;
 import com.familyan.smarth.domain.Member;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by shaowenchao on 16/9/8.

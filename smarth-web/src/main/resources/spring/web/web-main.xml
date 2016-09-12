@@ -157,6 +157,7 @@
                      <bean class="com.lotus.wechat.WechatInterceptor">
                             <property name="api" ref="wechatApi" />
                             <property name="redirectUrl" value="${weixin.redirectUrl}" />
+                            <property name="scope" value="snsapi_userinfo" />
                      </bean>
               </mvc:interceptor>
               <!-- 需要登录页面的账号验证  -->

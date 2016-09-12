@@ -11,5 +11,11 @@
 
     <artifactId>smarth-service</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.familyan</groupId>
+            <artifactId>lotus-service</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

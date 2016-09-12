@@ -11,5 +11,6 @@
 
        <dubbo:annotation package="com.familyan.smarth.service"/>
 
+       <dubbo:reference id="smsService" interface="com.familyan.smarth.manager.service.SmsService" lazy="true" check="false" />
 
 </beans>

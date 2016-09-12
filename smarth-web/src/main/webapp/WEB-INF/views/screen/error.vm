@@ -1,0 +1,102 @@
+#set($layout = "")
+
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>服务出错了</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="format-detection" content="telephone=no,email=no" >
+    <!-- 样式 -->
+    <style type="text/css">
+        html {font-size:100px;}
+        html,body {font-family:Arial,'Microsoft YaHei';width:100%;-webkit-user-select:none;color:#4d3e2d;background-color:#f4f3f3;}
+        body{margin:0;padding:0;}
+        body{line-height:1.4rem;}
+        html,body,div,a {-webkit-text-size-adjust:none;}
+        img {max-width:100%;height:auto;vertical-align:middle;border:0;}
+        /*页面样式*/
+        .error-404{height:4.07rem;background:#fff;width:100%; min-width:3.2rem;position:absolute;}
+        .img1{width:3.2rem;}
+        .error-title{position:absolute;top:0.3rem;}
+        .error-title .tit1{font-size:0.15rem; color:#4d3e2d;line-height: 0.25rem;width:3.2rem;text-align:center;}
+        .error-title .tit2{font-size:0.7rem; margin-left: 0.92rem;line-height: normal;}
+
+        .error-img{position:absolute;width:2.42rem;top:2.2rem;text-align:center;left:0.4rem; z-index: 3;}
+        .errorcode{font-size:.05rem;line-height: .08rem; position: relative; z-index: 5;}
+    </style>
+</head>
+<body>
+<div class="error-404">
+    <img src="http://img.taocaiku.com/201507311718573234" class="img1">
+    <div class="error-title">
+        <div class="tit1">哎呀，出错了！</div>
+        <div class="errorcode" #if(!$showStack) style="display: none" #end >
+            <div>异常堆栈:</div>
+<pre class="nolh">
+    $stack
+</pre>
+
+        </div>
+    </div>
+</div>
+<img src="http://img.taocaiku.com/201507311719273235" class="error-img">
+<!--错误日志-->
+<div style="display:none;"></div>
+<script>
+    (function (doc, win) {
+        // 分辨率Resolution适配
+        var docEl = doc.documentElement,
+                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+                recalc = function () {
+                    var clientWidth = docEl.clientWidth;
+                    if (!clientWidth) return;
+                    docEl.style.fontSize = 100 * (clientWidth / 320) + 'px';
+                };
+
+        // Abort if browser does not support addEventListener
+        if (!doc.addEventListener) return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener('DOMContentLoaded', recalc, false);
+        // 一物理像素在不同屏幕的显示效果不一样。要根据devicePixelRatio来修改meta标签的scale,要注释上面的meta标签
+        (function(){
+            return;
+            var dpr = scale =1;
+            var isIPhone = win.navigator.appVersion.match(/iphone/gi);
+            var devicePixelRatio = win.devicePixelRatio;
+            if (isIPhone) {
+                // iOS下，对于2和3的屏，用2倍的方案，其余的用1倍方案
+                if (devicePixelRatio >= 3 && (!dpr || dpr >= 3)) {
+                    dpr = 3;
+                } else if (devicePixelRatio >= 2 && (!dpr || dpr >= 2)){
+                    dpr = 2;
+                } else {
+                    dpr = 1;
+                }
+            } else {
+                // 其他设备下，仍旧使用1倍的方案
+                dpr = 1;
+            }
+            scale = 1 / dpr;
+
+            //
+            var metaEl = "";
+            metaEl = doc.createElement('meta');
+            metaEl.setAttribute('name', 'viewport');
+            metaEl.setAttribute('content', 'initial-scale=' + scale + ', maximum-scale=' + scale + ', minimum-scale=' + scale + ', user-scalable=no');
+            if (docEl.firstElementChild) {
+                docEl.firstElementChild.appendChild(metaEl);
+            } else {
+                var wrap = doc.createElement('div');
+                wrap.appendChild(metaEl);
+                doc.write(wrap.innerHTML);
+            }
+        })();
+    })(document, window);
+</script>
+</body>
+</html>

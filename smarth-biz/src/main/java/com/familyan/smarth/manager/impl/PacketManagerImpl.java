@@ -1,11 +1,10 @@
 package com.familyan.smarth.manager.impl;
 
-import com.familyan.smarth.dao.ItemDao;
 import com.familyan.smarth.dao.MemberPacketDao;
 import com.familyan.smarth.dao.PacketDao;
-import com.familyan.smarth.domain.Item;
 import com.familyan.smarth.domain.MemberPacket;
 import com.familyan.smarth.domain.Packet;
+import com.familyan.smarth.domain.PacketDTO;
 import com.familyan.smarth.manager.PacketManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -25,27 +24,16 @@ public class PacketManagerImpl implements PacketManager {
     @Autowired
     private PacketDao packetDao;
     @Autowired
-    private ItemDao itemDao;
-    @Autowired
     private MemberPacketDao memberPacketDao;
 
     @Override
-    public void add(Packet packet, List<Item> items) {
+    public void add(Packet packet) {
         packetDao.insert(packet);
-        for(Item item : items) {
-            item.setPacketId(packet.getId());
-            itemDao.insert(item);
-        }
     }
 
     @Override
-    public void modify(Packet packet, List<Item> items) {
+    public void modify(Packet packet) {
         packetDao.update(packet);
-        itemDao.deleteByPacketId(packet.getId());
-        for(Item item : items) {
-            item.setPacketId(packet.getId());
-            itemDao.insert(item);
-        }
     }
 
     @Override
@@ -65,6 +53,9 @@ public class PacketManagerImpl implements PacketManager {
 
     @Override
     public List<Packet> findByIds(List<Integer> ids) {
+        if(ids == null || ids.isEmpty()){
+            return Collections.emptyList();
+        }
         return packetDao.findByIds(ids);
     }
 
@@ -74,17 +65,23 @@ public class PacketManagerImpl implements PacketManager {
     }
 
     @Override
-    public void buy(Long memberId, Integer packetId) {
+    public int buy(Long memberId, Integer packetId) {
+        int count = memberPacketDao.countByMemberIdAndPacketId(memberId, packetId);
+        if (count > 0) {
+            // 已经购买过
+            return 0;
+        }
         //
         MemberPacket memberPacket = new MemberPacket();
         memberPacket.setPacketId(packetId);
         memberPacket.setMemberId(memberId);
         memberPacket.setStatus(1);
         memberPacketDao.insert(memberPacket);
+        return 1;
     }
 
     @Override
-    public PageResult<List<Packet>> findByPage(Packet packet, Integer start, Integer limit, String orderBy) {
+    public PageResult<List<Packet>> findByPage(PacketDTO packet, Integer start, Integer limit, String orderBy) {
         int count = packetDao.countByParams(packet);
         if (count == 0) {
             return PageResult.emptyResult(Collections.<Packet>emptyList());

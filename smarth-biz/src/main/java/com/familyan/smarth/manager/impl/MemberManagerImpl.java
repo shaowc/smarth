@@ -167,6 +167,7 @@ public class MemberManagerImpl implements MemberManager {
                 if(!UserNameUtil.validateUserName(id))
                     return false;
         }
+        log.info(id);
         if(StringUtils.isBlank(id)) return false;
         if(StringUtils.isBlank(memberDO.getPassword())) {
             memberDO.setPassword("123456");//默认密码

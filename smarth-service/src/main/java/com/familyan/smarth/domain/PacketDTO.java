@@ -1,12 +1,15 @@
 package com.familyan.smarth.domain;
 
-/**
- * Created by ibator.
- */
-public class Packet {
+import java.io.Serializable;
+import java.util.List;
 
+/**
+ * Created by shaowenchao on 16/9/10.
+ */
+public class PacketDTO implements Serializable {
+    private static final long serialVersionUID = 2770728160759659046L;
     /**
-     * 
+     *
      *
      */
     private Integer id;
@@ -29,18 +32,17 @@ public class Packet {
     private Integer price;
 
     /**
-     * 
+     *
      *
      */
     private java.util.Date gmtCreate;
 
     /**
-     * 
+     *
      *
      * 默认值：CURRENT_TIMESTAMP
      */
     private java.util.Date gmtModified;
-
 
     public Integer getId() {
         return id;
@@ -99,4 +101,3 @@ public class Packet {
     }
 
 }
-
