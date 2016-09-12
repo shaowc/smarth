@@ -32,6 +32,16 @@ public class CheckerController {
         return "checker/reg";
     }
 
+    /**
+     * 注册体检手，绑定手机号，完善个人信息
+     *
+     * @param loginMember
+     * @param openId
+     * @param checker
+     * @param code
+     * @param verifyCode
+     * @return
+     */
     @RequestMapping(value = "reg", method = RequestMethod.POST)
     @Security
     public Result doreg(LoginMember loginMember, WechatOpenId openId, Checker checker, String code, String verifyCode) {
@@ -43,6 +53,20 @@ public class CheckerController {
         checker.setMemberId(loginMember.getId());
         checkerManager.save(checker);
         return Result.success(1);
+    }
+
+
+    /**
+     * 我的体检手
+     *
+     * @param loginMember
+     * @param openId
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping("list")
+    public String list(LoginMember loginMember, WechatOpenId openId, ModelMap modelMap) {
+        return "checker/list";
     }
 
 }

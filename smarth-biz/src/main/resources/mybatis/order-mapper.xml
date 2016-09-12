@@ -33,6 +33,12 @@
             <if test="params.memberId !=null">AND member_id = #{params.memberId}</if>
             <if test="params.checkerId !=null">AND checker_id = #{params.checkerId}</if>
             <if test="params.packetId !=null">AND packet_id = #{params.packetId}</if>
+            <if test="params.statuses !=null">
+                AND status IN
+                <foreach collection="params.statuses" open="(" close=")" separator="," item="item" >
+                    #{item}
+                </foreach>
+            </if>
         </if>
     </sql>
 </mapper>

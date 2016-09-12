@@ -20,9 +20,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by xifeng on 2015/11/19.
- */
 @Controller
 @RequestMapping("sms")
 public class SmsController {

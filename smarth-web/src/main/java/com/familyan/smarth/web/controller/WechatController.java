@@ -30,6 +30,8 @@ import java.io.IOException;
 
 /**
  * Created by shaowenchao on 16/9/9.
+ * 微信消息入口
+ * 网页授权，自动注册登录
  */
 @RequestMapping("wechat")
 @Controller

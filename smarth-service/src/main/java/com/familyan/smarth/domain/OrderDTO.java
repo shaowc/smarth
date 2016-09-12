@@ -1,6 +1,8 @@
 package com.familyan.smarth.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by shaowenchao on 16/9/9.
@@ -100,6 +102,8 @@ public class OrderDTO implements Serializable {
      * 默认值：CURRENT_TIMESTAMP
      */
     private java.util.Date gmtModify;
+
+    private List<Integer> statuses;
 
 
     public Integer getId() {
@@ -228,5 +232,17 @@ public class OrderDTO implements Serializable {
 
     public void setGmtModify(java.util.Date gmtModify) {
         this.gmtModify = gmtModify;
+    }
+
+    public List<Integer> getStatuses() {
+        return statuses;
+    }
+
+    public void addStatus(Integer status) {
+        if(statuses == null) {
+            statuses = new ArrayList<>();
+        }
+
+        statuses.add(status);
     }
 }
