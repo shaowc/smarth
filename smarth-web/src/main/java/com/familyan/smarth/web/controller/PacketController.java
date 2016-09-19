@@ -35,7 +35,7 @@ public class PacketController {
      */
     @RequestMapping("list")
     public String list(LoginMember loginMember, WechatOpenId openId, PacketDTO packetDTO, Page page, ModelMap modelMap) {
-        PageResult<List<Packet>> pageResult = packetManager.findByPage(packetDTO, 1, Integer.MAX_VALUE, "gmt_create" );
+        PageResult<List<Packet>> pageResult = packetManager.findByPage(packetDTO, 0, Integer.MAX_VALUE, "gmt_create" );
         modelMap.put("result", pageResult);
         return "packet/list";
     }
@@ -80,7 +80,7 @@ public class PacketController {
         orderDTO.addStatus(1);
         orderDTO.addStatus(2);
         orderDTO.addStatus(3);
-        PageResult<List<Order>> pageResult = orderManager.findByPage(orderDTO, 1, Integer.MAX_VALUE, "checkup_time");
+        PageResult<List<Order>> pageResult = orderManager.findByPage(orderDTO, 0, Integer.MAX_VALUE, "checkup_time");
         modelMap.put("orders", pageResult.getData());
         return "packet/schedule";
     }
