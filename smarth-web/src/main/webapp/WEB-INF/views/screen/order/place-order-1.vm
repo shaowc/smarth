@@ -61,12 +61,13 @@
     <div class="ui-form-btns">
         <a href="javascript:" class="ui-btn ui-btn-primary" id="save">确认下单</a>
     </div>
+    <input type="hidden" name="packetId" value="$packet.id">
     <input type="hidden" name="checkerId" id="doctor-id">
 </form>
 <!-- 弹出选择的快检手列表 -->
 <div class="bd hide" id="select-list">
     <div class="ui-alert">暂无快检手</div>
-    <div class="ui-suit" data-id="123456">
+    <div class="ui-suit" data-id="1">
         <div class="ui-suit-hd">
             <div class="primary"></div>
             <div class="state">距离3000m</div>
@@ -79,7 +80,7 @@
             </div>
         </div>
     </div>
-    <div class="ui-suit" data-id="456789">
+    <div class="ui-suit" data-id="2">
         <div class="ui-suit-hd">
             <div class="primary"></div>
             <div class="state">距离3000m</div>

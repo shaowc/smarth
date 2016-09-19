@@ -1,0 +1,110 @@
+#set($title = '订单详情')
+<!-- 订单状态 -->
+<div class="order-state">
+    <p class="title">#if($order.status==0)待接单#elseif($order.status==1)已接单，待支付#elseif($order.status==2)预约成功#elseif($order.status==3)服务完成#elseif($order.status==4)已取消#end</p>
+    <p class="aux">$dateTool.format('yyyy-MM-dd HH:mm:ss', $order.gmtModify)</p>
+</div>
+<!-- 订单状态 -->
+<script src="$staticServer.get('lib/zepto.min.js')"></script>
+<div class="bd">
+    <div class="ui-ensemble">
+        <div class="ui-ensemble-bd">
+            <div class="dt">
+                <div class="ui-ensemble-img"><img src="images/package-img.jpg"></div>
+            </div>
+            <div class="dd primary">
+                <div class="title">$!packet.name</div>
+                <p class="txt">$!packet.description</p>
+            </div>
+        </div>
+        <div class="ui-ensemble-fd">
+            <div class="dt primary">
+                <span class="price">￥#currency($order.price, '#.##')</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui-read-title">订单信息</div>
+    <div class="ui-read-group">
+        <div class="ui-read-input">
+            <div class="label">检查人</div>
+            <div class="txt primary">$!checker.name</div>
+        </div>
+        <div class="ui-read-input">
+            <div class="label">联系电话</div>
+            <div class="txt primary"><a href="tel:123456789" class="ui-link">$!checker.mobile</a></div>
+        </div>
+        <div class="ui-read-input">
+            <div class="label">预约时间</div>
+            <div class="txt primary">$dateTool.format('yyyy-MM-dd HH:mm:ss', $order.checkupTime)</div>
+        </div>
+        <div class="ui-read-input">
+            <div class="label">检查地址</div>
+            <div class="txt primary">$order.address</div>
+        </div>
+    </div>
+    <!-- 体检报告 体检完成才有 -->
+    <div class="ui-read-title">体检报告</div>
+    <div class="ui-read-group">
+        <div class="ui-read-input">
+            <div class="label">项目</div>
+            <div class="txt primary">值</div>
+        </div>
+        <div class="ui-read-input">
+            <div class="label">项目</div>
+            <div class="txt primary">值</div>
+        </div>
+        <div class="ui-read-input">
+            <div class="txt primary tal">备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容备注的内容</div>
+        </div>
+    </div>
+    <!-- /.体检报告 -->
+
+    #if(!$_loginMember.containsFeature(1) && $order.status == 1)
+    <div class="ui-form-btns">
+        <a href="javascript:" class="ui-btn ui-btn-primary">立即付款</a>
+        <a href="javascript:" class="ui-btn ui-btn-warn" id="cancelbtn">取消订单</a>
+    </div>
+    #elseif($_loginMember.containsFeature(1))
+    <div class="ui-form-btns">
+        #if($order.status == 0)
+        <a href="javascript:" class="ui-btn ui-btn-primary" id="acceptbtn">接单</a>
+        <a href="javascript:" class="ui-btn ui-btn-warn" id="cancelbtn">取消</a>
+        #elseif($status == 2)
+        <a href="/order/report.htm?orderId=$order.id" class="ui-btn ui-btn-primary">填写体检报告</a>
+        #end
+    </div>
+    #end
+</div>
+<script src="$staticServer.get('js/physical.js')"></script>
+<script>
+    $(function(){
+
+        //取消按钮
+        $('#cancelbtn').on('click',function(){
+            $.comform('提示','你确认要取消预约吗？',function(){
+                //点确认的回调
+                console.log('点击了确认');
+
+                $.pajax('id1','/order/cancel.htm','POST','id=$order.id',function(data){
+                    //ajax返回的data
+                    console.log(data);
+                });
+            });
+        });
+
+        //接单按钮
+        $('#acceptbtn').on('click',function(){
+            $.comform('提示','接单前请务必电话确认',function(){
+                //点确认的回调
+                console.log('点击了确认');
+
+                $.pajax('id2','/order/receive.htm','POST','id=$order.id',function(data){
+                    //ajax返回的data
+                    console.log(data);
+                });
+            })
+        });
+
+    });
+</script>

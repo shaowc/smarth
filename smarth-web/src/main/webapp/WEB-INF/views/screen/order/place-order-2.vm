@@ -61,43 +61,34 @@
     <div class="ui-form-btns">
         <a href="javascript:" class="ui-btn ui-btn-primary" id="save">确认下单</a>
     </div>
-    <input type="hidden" name="package-id" id="package-id">
+    <input type="hidden" name="checkerId" value="$checker.memberId">
+    <input type="hidden" name="packetId" id="package-id">
 </form>
 <!-- 弹出选择的体检包列表 -->
 <div class="bd hide" id="select-list">
+    #if($packets.size() == 0)
     <div class="ui-alert">暂无体检包</div>
-    <div class="ui-ensemble" data-id="456">
-        <div class="ui-ensemble-bd">
-            <div class="dt">
-                <div class="ui-ensemble-img"><img src="images/package-img.jpg"></div>
+    #else
+        #foreach($packet in $packets)
+            <div class="ui-ensemble" data-id="$packet.id">
+                <div class="ui-ensemble-bd">
+##                    <div class="dt">
+##                        <div class="ui-ensemble-img"><img src="images/package-img.jpg"></div>
+##                    </div>
+                    <div class="dd primary">
+                        <div class="title">$packet.name</div>
+                        <p class="txt">$packet.description</p>
+                    </div>
+                </div>
+                <div class="ui-ensemble-fd">
+                    <div class="dt primary">
+                        <span class="price">￥#currency($packet.price, '#.##')</span>
+                    </div>
+                </div>
             </div>
-            <div class="dd primary">
-                <div class="title">包名1</div>
-                <p class="txt">简介的内容简介的内容简介的内容</p>
-            </div>
-        </div>
-        <div class="ui-ensemble-fd">
-            <div class="dt primary">
-                <span class="price">￥123</span>
-            </div>
-        </div>
-    </div>
-    <div class="ui-ensemble" data-id="4456">
-        <div class="ui-ensemble-bd">
-            <div class="dt">
-                <div class="ui-ensemble-img"><img src="images/package-img.jpg"></div>
-            </div>
-            <div class="dd primary">
-                <div class="title">包名2</div>
-                <p class="txt">简介的内容简介的内容简介的内容</p>
-            </div>
-        </div>
-        <div class="ui-ensemble-fd">
-            <div class="dt primary">
-                <span class="price">￥123</span>
-            </div>
-        </div>
-    </div>
+        #end
+    #end
+
 </div>
 <!-- /.弹出选择的体检包列表 -->
 <script src="$staticServer.get('lib/zepto.min.js')"></script>
@@ -161,7 +152,7 @@
                 var param = $('#place-order-form').serializeArray();
                 // var param = $('#place-order-form').serialize();
                 //提交
-                $.pajax('id1','url','type',param,function(data){
+                $.pajax('id1','/order/submit.htm','POST',param,function(data){
                     //ajax返回的data
                     console.log(data);
                 });

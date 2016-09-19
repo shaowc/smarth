@@ -1,6 +1,7 @@
 package com.familyan.smarth.web.controller;
 
 import com.familyan.smarth.domain.*;
+import com.familyan.smarth.manager.CheckerManager;
 import com.familyan.smarth.manager.OrderManager;
 import com.familyan.smarth.manager.PacketManager;
 import com.familyan.smarth.service.MemberService;
@@ -11,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,6 +31,8 @@ public class OrderController {
     private MemberService memberService;
     @Autowired
     private PacketManager packetManager;
+    @Autowired
+    private CheckerManager checkerManager;
 
     /**
      * 我的订单, 普通用户
@@ -62,9 +67,10 @@ public class OrderController {
      *
      */
     @RequestMapping("place-checker")
-    public String placeChecker(LoginMember loginMember, Integer packetId, ModelMap modelMap) {
-        Packet packet = packetManager.findById(packetId);
-        modelMap.put("packet", packet);
+    public String placeChecker(LoginMember loginMember, Long checkerId, ModelMap modelMap) {
+        modelMap.put("checkerId", checkerId);
+        List<Packet> packets = packetManager.findByMemberId(checkerId);
+        modelMap.put("packets", packets);
         return "order/place-order-2";
     }
 
@@ -91,6 +97,7 @@ public class OrderController {
             return Result.error("未选择体检包");
         }
 
+        order.setPrice(packet.getPrice());
         order.setStatus(0);
         orderManager.add(order);
         return Result.success(1);
@@ -107,18 +114,33 @@ public class OrderController {
     @RequestMapping("detail")
     public String detail(LoginMember loginMember, WechatOpenId openId, Integer id, ModelMap modelMap) {
         Order order = orderManager.findById(id);
+
+        if(loginMember.containsFeature(1) && !order.getCheckerId().equals(loginMember.getId())) {
+            // 快检手
+            modelMap.put("msg", "不是您的订单，无权限访问");
+            return "error";
+        } else if(!loginMember.containsFeature(1) && !order.getMemberId().equals(loginMember.getId())) {
+            // 普通用户
+            modelMap.put("msg", "不是您的订单，无权限访问");
+            return "error";
+        }
+        Checker checker = checkerManager.findByMemberId(order.getCheckerId());
+        Packet packet = packetManager.findById(order.getPacketId());
+        modelMap.put("packet", packet);
+        modelMap.put("checker", checker);
         modelMap.put("order", order);
         return "order/detail";
     }
 
     /**
-     * 接单
+     * 接单，
      * @param loginMember
      * @param openId
      * @param id
      * @return
      */
     @RequestMapping("receive")
+    @ResponseBody
     public Result receive(LoginMember loginMember, WechatOpenId openId, Integer id) {
         Order order = orderManager.findById(id);
         if(order == null) {
@@ -139,21 +161,27 @@ public class OrderController {
     }
 
     /**
-     * 拒绝接单
+     * 拒绝接单, 取消订单
      * @param loginMember
      * @param openId
      * @param id
      * @return
      */
-    @RequestMapping("refuse")
-    public Result refuse(LoginMember loginMember, WechatOpenId openId, Integer id) {
+    @RequestMapping("cancel")
+    public Result cancel(LoginMember loginMember, WechatOpenId openId, Integer id) {
+
+
         Order order = orderManager.findById(id);
         if(order == null) {
             return Result.error("订单不存在");
         }
 
-        if(!order.getCheckerId().equals(loginMember.getId())) {
+        if (loginMember.containsFeature(1) && !order.getCheckerId().equals(loginMember.getId())) {
+            // 快检手,拒绝接单
             return Result.error("不是您的订单，您无权限处理");
+        } else if (!order.getMemberId().equals(loginMember.getId())){
+            // 下单人，取消订单
+            return Result.error("不是您的订单，您不能取消");
         }
 
         if(order.getStatus() != 0) {
@@ -167,13 +195,28 @@ public class OrderController {
 
     /**
      * 填写体检报告，限体检手访问
-     * @param loginMember
-     * @param openId
-     * @param order
-     * @return
+     *
      */
-    @RequestMapping("report")
-    public Result report(LoginMember loginMember, WechatOpenId openId, Order order) {
+    @RequestMapping(value = "report", method = RequestMethod.GET)
+    public String report(LoginMember loginMember, Integer orderId, ModelMap modelMap) {
+        Order order = orderManager.findById(orderId);
+        List<String> items = Arrays.asList(order.getPackageContent().split(","));
+        modelMap.put("items", items);
+        MemberDTO member = memberService.findById(order.getMemberId());
+        modelMap.put("member", member);
+        modelMap.put("order", order);
+        return "order/report";
+    }
+
+    /**
+     * 填写体检报告，限体检手访问
+     *
+     */
+    @RequestMapping(value = "report", method = RequestMethod.POST)
+    @ResponseBody
+    public Result report(LoginMember loginMember, Integer orderId, Order order) {
+        order.setStatus(3);
+        orderManager.modify(order);
         return Result.success(1);
     }
 

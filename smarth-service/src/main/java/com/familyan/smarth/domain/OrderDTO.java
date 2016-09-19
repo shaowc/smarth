@@ -34,6 +34,8 @@ public class OrderDTO implements Serializable {
      */
     private Integer packetId;
 
+    private Integer price;
+
     /**
      * 购买时体检包内容
      *
@@ -136,6 +138,14 @@ public class OrderDTO implements Serializable {
 
     public void setPacketId(Integer packetId) {
         this.packetId = packetId;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 
     public String getPackageContent() {
