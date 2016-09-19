@@ -14,10 +14,19 @@ public interface CheckerManager {
 
     void save(Checker checker);
 
+    /**
+     *
+     * @param memberId
+     * @return
+     */
     Checker findByMemberId(Long memberId);
 
     Checker findById(Integer id);
 
+    List<Checker> findMemberChecker(Long memberId);
+
     PageResult<List<Checker>> findByPage(CheckerDTO checkerDTO, Page page);
+
+    List<Checker> findByMemberIds(List<Long> memberId);
 
 }

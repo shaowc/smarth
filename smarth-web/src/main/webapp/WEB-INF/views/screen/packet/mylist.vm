@@ -1,0 +1,25 @@
+#set($title = '我的体检包')
+<div class="bd">
+    #foreach($item in $packets)
+    <div class="ui-ensemble">
+        <div class="ui-ensemble-bd">
+            <div class="dt">
+                <div class="ui-ensemble-img"><img src="images/package-img.jpg"></div>
+            </div>
+            <div class="dd primary">
+                <div class="title">$item.name</div>
+                <p class="txt">$item.description</p>
+            </div>
+        </div>
+        <div class="ui-ensemble-fd">
+            <div class="dt primary">
+                <span class="price">￥#currency($item.price, '#.##')</span>
+            </div>
+            <div class="dd"><a href="doctor-schedule.html" class="ui-btn ui-btn-mini ui-btn-default">服务日程</a></div>
+        </div>
+    </div>
+    #end
+
+</div>
+<script src="$staticServer.get('lib/zepto.min.js')"></script>
+<script src="$staticServer.get('js/physical.js')"></script>

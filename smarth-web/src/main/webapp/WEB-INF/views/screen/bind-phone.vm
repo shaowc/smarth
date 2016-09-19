@@ -1,0 +1,101 @@
+<form class="ui-form" id="regform">
+    <div class="ui-cell">
+        <div class="ui-cell-hd">
+            <label class="ui-label">+86</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <input class="ui-input" type="text" name="mobile" id="phone" placeholder="请填写手机号">
+        </div>
+    </div>
+    <div class="ui-cell">
+        <div class="ui-cell-bd ui-cell-primary">
+            <input class="ui-input" type="text" name="code" id="code" placeholder="请输入手机验证码">
+        </div>
+        <div class="ui-cell-ft">
+            <a href="javascript:" class="ui-btn ui-btn-code" id="getcode">发送校验码</a>
+        </div>
+    </div>
+    <div class="ui-form-btns">
+        <a href="javascript:" class="ui-btn ui-btn-primary" id="submit">确认</a>
+    </div>
+    <input type="hidden" name="hidephone" id="hidephone">
+    <input type="hidden" name="identifier" id="hidecodekey">
+</form>
+<script src="$staticServer.get('lib/zepto.min.js')"></script>
+<script src="$staticServer.get('js/physical.js')"></script>
+
+<script>
+    $(function(){
+        /**
+         * 校验
+         */
+        function checkform(){
+            var phone = $('#phone').val();
+            var code = $('#code').val();
+            var regphone = new RegExp(/^1\d{10}$/i);
+            var hidephone = $('#hidephone').val();
+            if(!phone){
+                $.Tip({'id':'c','content':'请填写手机号'});
+                return false;
+            }
+            if(!regphone.test(phone)){
+                $.Tip({'id':'error','content':'请填写正确的手机号'});
+                return false;
+            }
+            if(!hidephone){
+                $.Tip({'id':'error','content':'请先获取验证码'});
+                return false;
+            }
+            if(!code){
+                $.Tip({'id':'error','content':'请填写验证码'});
+                return false;
+            }
+            return true;
+        }
+
+
+        //绑定发送校验码按钮
+        $('#getcode').on('click',function(){
+            var btn = $(this);
+            var regphone = new RegExp(/^1\d{10}$/i);
+            var phone = $('#phone').val();
+            if(!phone){
+                $.Tip({'id':'c','content':'请填写手机号'});
+                return;
+            }
+            if(!regphone.test(phone)){
+                $.Tip({'id':'error','content':'请填写正确的手机号'});
+                return;
+            }
+            if(btn.hasClass('ui-btn-disabled')){
+                return;
+            }
+            btn.addClass('ui-btn-disabled');
+            //发送验证码请求
+            $.pajax('id2','/sms/send.htm','POST','mobile='+ phone,function(data){
+                //ajax返回的data
+                console.log(data);
+
+                $('#hidephone').val(phone);
+                $('#hidecodekey').val(data);
+            });
+
+        });
+
+
+        //绑定确认按钮
+        $('#submit').on('click',function(){
+
+            if(checkform()){
+                var param = $('#regform').serializeArray();
+                // var param = $('#regform').serialize();
+                //提交
+                $.pajax('id1','/bind-phone.htm','POST', param, function(data){
+                    //ajax返回的data
+                    console.log(data);
+                });
+            }
+
+        });
+    });
+</script>

@@ -1,10 +1,8 @@
 package com.familyan.smarth.web.controller;
 
-import com.familyan.smarth.domain.LoginMember;
-import com.familyan.smarth.domain.MemberDTO;
-import com.familyan.smarth.domain.Order;
-import com.familyan.smarth.domain.OrderDTO;
+import com.familyan.smarth.domain.*;
 import com.familyan.smarth.manager.OrderManager;
+import com.familyan.smarth.manager.PacketManager;
 import com.familyan.smarth.service.MemberService;
 import com.lotus.service.result.PageResult;
 import com.lotus.service.result.Result;
@@ -28,6 +26,8 @@ public class OrderController {
     private OrderManager orderManager;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private PacketManager packetManager;
 
     /**
      * 我的订单, 普通用户
@@ -47,16 +47,25 @@ public class OrderController {
 
 
     /**
-     * 预约
+     * 预约下单
      *
-     * @param loginMember
-     * @param openId
-     * @param order
-     * @return
      */
-    @RequestMapping("appoint")
-    public String apply(LoginMember loginMember, WechatOpenId openId, Order order) {
-        return "order/submit";
+    @RequestMapping("place-packet")
+    public String placePacket(LoginMember loginMember, Integer packetId, ModelMap modelMap) {
+        Packet packet = packetManager.findById(packetId);
+        modelMap.put("packet", packet);
+        return "order/place-order-1";
+    }
+
+    /**
+     * 预约下单
+     *
+     */
+    @RequestMapping("place-checker")
+    public String placeChecker(LoginMember loginMember, Integer packetId, ModelMap modelMap) {
+        Packet packet = packetManager.findById(packetId);
+        modelMap.put("packet", packet);
+        return "order/place-order-2";
     }
 
 
@@ -75,6 +84,11 @@ public class OrderController {
         MemberDTO memberDTO = memberService.findById(checkerId);
         if(memberDTO.getFeatures() == null || !memberDTO.getFeatures().contains(1)) {
             return Result.error("未选择快检手");
+        }
+
+        Packet packet = packetManager.findById(order.getPacketId());
+        if(packet == null) {
+            return Result.error("未选择体检包");
         }
 
         order.setStatus(0);

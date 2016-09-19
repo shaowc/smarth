@@ -3,7 +3,6 @@ package com.familyan.smarth.web.controller;
 import com.familyan.smarth.domain.*;
 import com.familyan.smarth.manager.OrderManager;
 import com.familyan.smarth.manager.PacketManager;
-import com.lotus.core.web.security.Security;
 import com.lotus.service.result.Page;
 import com.lotus.service.result.PageResult;
 import com.lotus.wechat.WechatOpenId;
@@ -36,8 +35,8 @@ public class PacketController {
      */
     @RequestMapping("list")
     public String list(LoginMember loginMember, WechatOpenId openId, PacketDTO packetDTO, Page page, ModelMap modelMap) {
-        PageResult<List<Packet>> pageResult = packetManager.findByPage(packetDTO, page.getStart(), page.getPageSize(), "gmt_create" );
-        modelMap.put("pageResult", pageResult);
+        PageResult<List<Packet>> pageResult = packetManager.findByPage(packetDTO, 1, Integer.MAX_VALUE, "gmt_create" );
+        modelMap.put("result", pageResult);
         return "packet/list";
     }
 

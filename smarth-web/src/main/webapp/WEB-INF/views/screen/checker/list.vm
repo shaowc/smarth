@@ -1,0 +1,67 @@
+#set($title = '我的快检手')
+<div class="bd">
+    <div class="ui-suit" data-id="123">
+        <div class="ui-suit-hd">
+            <div class="date primary"></div>
+            <div class="state">距离3000m</div>
+        </div>
+        <div class="ui-suit-bd">
+            <div class="img"><img src="http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/"></div>
+            <div class="primary">
+                <div class="title">快检手名字</div>
+                <div class="txt">简介</div>
+            </div>
+        </div>
+        <div class="ui-suit-fd">
+            <div class="dt primary"><a href="javascript:" class="ui-link del">删除</a></div>
+            <div class="dd"><a href="place-order-2.html" class="ui-btn ui-btn-mini ui-btn-default">预约体检</a></div>
+        </div>
+    </div>
+    <div class="ui-suit" data-id="456">
+        <div class="ui-suit-hd">
+            <div class="date primary"></div>
+            <div class="state">距离3000m</div>
+        </div>
+        <div class="ui-suit-bd">
+            <div class="img"><img src="http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/"></div>
+            <div class="primary">
+                <div class="title">快检手名字</div>
+                <div class="txt">简介</div>
+            </div>
+        </div>
+        <div class="ui-suit-fd">
+            <div class="dt primary"><a href="javascript:" class="ui-link del">删除</a></div>
+            <div class="dd"><a href="place-order-2.html" class="ui-btn ui-btn-mini ui-btn-default">预约体检</a></div>
+        </div>
+    </div>
+</div>
+<script src="lib/zepto.min.js"></script>
+<script src="js/physical.js"></script>
+<script>
+    $(function(){
+        //所有删除按钮
+        $('.del').on('click',function(){
+            var parent = $(this).parents('.ui-suit');
+            var itemid = parent.attr('data-id');
+
+            $.comform('提示','你确定要删除？',function(){
+                //点确认的回调
+                console.log('点击了确认');
+                var param = {
+                    id:itemid
+                };
+                $.pajax('id1','url','type',param,function(data){
+                    //ajax返回的data
+                    console.log(data);
+
+                    if(parent.siblings('.ui-suit').length == 0){
+                        parent.after('<div class="ui-alert">没有收藏的快检手了哦</div>');
+                    }
+                    //删除显示
+                    parent.remove();
+                });
+            });
+        });
+
+    });
+</script>

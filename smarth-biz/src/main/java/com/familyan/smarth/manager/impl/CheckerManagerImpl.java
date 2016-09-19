@@ -1,11 +1,15 @@
 package com.familyan.smarth.manager.impl;
 
 import com.familyan.smarth.dao.CheckerDao;
+import com.familyan.smarth.dao.MemberCheckerDao;
 import com.familyan.smarth.dao.MemberDao;
 import com.familyan.smarth.domain.Checker;
 import com.familyan.smarth.domain.CheckerDTO;
 import com.familyan.smarth.domain.Member;
+import com.familyan.smarth.domain.MemberChecker;
 import com.familyan.smarth.manager.CheckerManager;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.lotus.service.result.Page;
 import com.lotus.service.result.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,8 @@ public class CheckerManagerImpl implements CheckerManager {
     private CheckerDao checkerDao;
     @Autowired
     private MemberDao memberDao;
+    @Autowired
+    private MemberCheckerDao memberCheckerDao;
 
     @Override
     @Transactional
@@ -58,6 +64,26 @@ public class CheckerManagerImpl implements CheckerManager {
     @Override
     public Checker findById(Integer id) {
         return checkerDao.findById(id);
+    }
+
+    @Override
+    public List<Checker> findMemberChecker(Long memberId) {
+        List<MemberChecker> list = memberCheckerDao.findByMemberId(memberId);
+        if(list.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
+        List<Long> checkerIds = Lists.transform(list, new Function<MemberChecker, Long>() {
+            @Override
+            public Long apply(MemberChecker input) {
+                return input.getCheckerId();
+            }
+        }); 
+        return findByMemberIds(checkerIds);
+    }
+
+    public List<Checker> findByMemberIds(List<Long> checkerIds) {
+        return checkerDao.findByMemberIds(checkerIds);
     }
 
     @Override

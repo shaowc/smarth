@@ -1,0 +1,171 @@
+#set($title = '下单')
+<form class="ui-form" id="place-order-form">
+    <div class="ui-cell">
+        <div class="ui-cell-hd">
+            <label class="ui-label">时间</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <input class="ui-input" type="datetime-local" name="date" id="date">
+        </div>
+    </div>
+    <div class="ui-cell ui-cell-select">
+        <div class="ui-cell-hd">
+            <label class="ui-label">省</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <select name="province" id="province" class="ui-select">
+                <option value="">浙江省</option>
+                <option value="">上海市</option>
+            </select>
+        </div>
+    </div>
+    <div class="ui-cell ui-cell-select">
+        <div class="ui-cell-hd">
+            <label class="ui-label">市</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <select name="city" id="city" class="ui-select">
+                <option value="">杭州市</option>
+                <option value="">温州市</option>
+            </select>
+        </div>
+    </div>
+    <div class="ui-cell ui-cell-select">
+        <div class="ui-cell-hd">
+            <label class="ui-label">区</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <select name="area" id="area" class="ui-select">
+                <option value="">上城区</option>
+                <option value="">下城区</option>
+            </select>
+        </div>
+    </div>
+    <div class="ui-cell">
+        <div class="ui-cell-hd">
+            <label class="ui-label">地址</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <input class="ui-input" type="text" name="address" id="address" placeholder="请输入您的详细地址">
+        </div>
+    </div>
+    <div class="ui-cell ui-cell-access" id="get-select">
+        <div class="ui-cell-hd">
+            <label class="ui-label">体检包</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <input class="ui-input" type="text" name="package" id="package" readonly="true" placeholder="请选择">
+        </div>
+        <div class="ui-cell-ft"></div>
+    </div>
+    <div class="ui-form-btns">
+        <a href="javascript:" class="ui-btn ui-btn-primary" id="save">确认下单</a>
+    </div>
+    <input type="hidden" name="package-id" id="package-id">
+</form>
+<!-- 弹出选择的体检包列表 -->
+<div class="bd hide" id="select-list">
+    <div class="ui-alert">暂无体检包</div>
+    <div class="ui-ensemble" data-id="456">
+        <div class="ui-ensemble-bd">
+            <div class="dt">
+                <div class="ui-ensemble-img"><img src="images/package-img.jpg"></div>
+            </div>
+            <div class="dd primary">
+                <div class="title">包名1</div>
+                <p class="txt">简介的内容简介的内容简介的内容</p>
+            </div>
+        </div>
+        <div class="ui-ensemble-fd">
+            <div class="dt primary">
+                <span class="price">￥123</span>
+            </div>
+        </div>
+    </div>
+    <div class="ui-ensemble" data-id="4456">
+        <div class="ui-ensemble-bd">
+            <div class="dt">
+                <div class="ui-ensemble-img"><img src="images/package-img.jpg"></div>
+            </div>
+            <div class="dd primary">
+                <div class="title">包名2</div>
+                <p class="txt">简介的内容简介的内容简介的内容</p>
+            </div>
+        </div>
+        <div class="ui-ensemble-fd">
+            <div class="dt primary">
+                <span class="price">￥123</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.弹出选择的体检包列表 -->
+<script src="$staticServer.get('lib/zepto.min.js')"></script>
+<script src="$staticServer.get('js/physical.js')"></script>
+<script>
+    $(function(){
+        //根据hash显示隐藏方法
+        function hashdisplay(){
+            if(window.location.hash == '#select'){
+                $('#place-order-form').hide();
+                $('#select-list').show();
+            }else{
+                $('#place-order-form').show();
+                $('#select-list').hide();
+            }
+        }
+
+        //校验
+        function check(){
+            var date = $('#date').val();
+            if(!date){
+                $.Tip({'id':'er','content':'请填写预约时间'});
+                return false;
+            }
+            var address = $('#address').val();
+            if(!address){
+                $.Tip({'id':'er','content':'请填写地址'});
+                return false;
+            }
+            var package = $('#package').val();
+            if(!package){
+                $.Tip({'id':'er','content':'请选择体检包'});
+                return false;
+            }
+            return true;
+        }
+
+        //绑定hash变化监听
+        $(window).on('popstate',hashdisplay);
+        hashdisplay();
+
+        //绑定改变hash
+        $('#get-select').on('click',function(){
+            window.location.hash = '#select';
+        });
+
+        //绑定select列表
+        $('#select-list').on('click','.ui-ensemble',function(){
+            var self = $(this);
+            var id = self.attr('data-id');
+            var name = self.find('.title').text().trim();
+            //把name显示到input
+            $('#get-select').find('input').val(name);
+            //吧id写到隐藏域？
+            // $('#package-id').val(id);
+            window.history.back();
+        });
+        //保存按钮
+        $('#save').on('click',function(){
+            if(check()){
+                var param = $('#place-order-form').serializeArray();
+                // var param = $('#place-order-form').serialize();
+                //提交
+                $.pajax('id1','url','type',param,function(data){
+                    //ajax返回的data
+                    console.log(data);
+                });
+            }
+        });
+    });
+</script>

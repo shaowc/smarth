@@ -40,43 +40,24 @@ public class SmsController {
 
     @RequestMapping("send")
     @ResponseBody
-    public Result<String> send(final String mobile,
-                               @RequestHeader(name = "Referer",required = false) String referer,
-                               HttpServletResponse response){
-        if(!setAjaxCrossDomainHeader(referer,response))
-            return Result.error("参数错误");
+    public Result<String> send(final String mobile){
 
         boolean isMobile = StringUtils.isNotBlank(mobile) &&  UserNameUtil.isMobile(mobile);
         if(isMobile){
-            try {
-                return Result.success(cache.get(mobile, new Callable<String>() {
-                    @Override
-                    public String call() throws Exception {
-                        return smsService.sendSmsVerifyCode(mobile);
-                    }
-                }));
-            } catch (ExecutionException e) {
-                return Result.error("服务异常，稍后重试");
-            }
+            return Result.success("123456");
+//            try {
+//                return Result.success(cache.get(mobile, new Callable<String>() {
+//                    @Override
+//                    public String call() throws Exception {
+//                        return smsService.sendSmsVerifyCode(mobile);
+//                    }
+//                }));
+//            } catch (ExecutionException e) {
+//                return Result.error("服务异常，稍后重试");
+//            }
         }else{
            return  Result.error("输入正确的手机号");
         }
-    }
-
-    private boolean setAjaxCrossDomainHeader(String referer, HttpServletResponse response) {
-        if(StringUtils.isNotBlank(referer)){
-            try {
-                URL u = new URL(referer);
-                if(u.getHost().endsWith(topDomain)){
-                    response.setHeader("Access-Control-Allow-Origin",u.getProtocol()+"://"+u.getHost());
-                    return true;
-                }
-            } catch (MalformedURLException e) {}
-        }else{
-            response.setHeader("Access-Control-Allow-Origin","http://"+appDomain);
-            return true;
-        }
-        return false;
     }
 
 

@@ -5,7 +5,7 @@
 
 
     <tables package="">
-        <table  name="CK_CHECKER" prefix="Ck" comments="true" package="com.familyan.smarth.domain" />
+        <table  name="CK_MEMBER_CHECKER" prefix="Ck" comments="false" package="com.familyan.smarth.domain" />
 
     </tables>
 

@@ -1,0 +1,118 @@
+#set($title='完善信息')
+<form class="ui-form" id="perfect-form">
+    <div class="ui-cell">
+        <div class="ui-cell-hd">
+            <label class="ui-label">姓名</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <input class="ui-input" type="text" name="username" id="username" placeholder="请输入您的姓名">
+        </div>
+    </div>
+    <div class="ui-cell ui-cell-select">
+        <div class="ui-cell-hd">
+            <label class="ui-label">性别</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <select name="" id="" class="ui-select">
+                <option value="">男</option>
+                <option value="">女</option>
+            </select>
+        </div>
+    </div>
+    <div class="ui-cell">
+        <div class="ui-cell-hd">
+            <label class="ui-label">生日</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <input class="ui-input" type="date" name="birth" id="birth">
+        </div>
+    </div>
+    <div class="ui-cell ui-cell-select">
+        <div class="ui-cell-hd">
+            <label class="ui-label">省</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <select name="province" id="province" class="ui-select">
+                <option value="">浙江省</option>
+                <option value="">上海市</option>
+            </select>
+        </div>
+    </div>
+    <div class="ui-cell ui-cell-select">
+        <div class="ui-cell-hd">
+            <label class="ui-label">市</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <select name="city" id="city" class="ui-select">
+                <option value="">杭州市</option>
+                <option value="">温州市</option>
+            </select>
+        </div>
+    </div>
+    <div class="ui-cell ui-cell-select">
+        <div class="ui-cell-hd">
+            <label class="ui-label">区</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <select name="area" id="area" class="ui-select">
+                <option value="">上城区</option>
+                <option value="">下城区</option>
+            </select>
+        </div>
+    </div>
+    <div class="ui-cell">
+        <div class="ui-cell-hd">
+            <label class="ui-label">地址</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <input class="ui-input" type="text" name="address" id="address" placeholder="请输入您的详细地址">
+        </div>
+    </div>
+    <div class="ui-form-btns">
+        <a href="javascript:" class="ui-btn ui-btn-primary" id="save">保存</a>
+    </div>
+</form>
+
+<script src="$staticServer.get('lib/zepto.min.js')"></script>
+<script src="$staticServer.get('js/physical.js')"></script>
+<script>
+    $(function(){
+        //校验表单
+        function check(){
+            var username = $('#username').val();
+            if(!username){
+                $.Tip({'id':'er','content':'请填写姓名'});
+                return false;
+            }
+
+            var birth = $('#username').val();
+            if(!birth){
+                $.Tip({'id':'er','content':'请填写生日'})
+                return false;
+            }
+
+            var address = $('#username').val();
+            if(!address){
+                $.Tip({'id':'er','content':'请填写详细地址'})
+                return false;
+            }
+
+            return true;
+        }
+
+        //绑定保存按钮
+        $('#save').on('click',function(){
+
+            if(check()){
+
+                var param = $('#perfect-form').serializeArray();
+                // var param = $('#regform').serialize();
+                //提交
+                $.pajax('id1','url','type',param,function(data){
+                    //ajax返回的data
+                    console.log(data);
+                });
+            }
+        });
+    });
+</script>
