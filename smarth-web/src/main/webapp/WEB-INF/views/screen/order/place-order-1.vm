@@ -1,49 +1,26 @@
-#set($title = '下单')
+#set($title = '预约下单')
 <form class="ui-form" id="place-order-form">
     <div class="ui-cell">
         <div class="ui-cell-hd">
             <label class="ui-label">时间</label>
         </div>
         <div class="ui-cell-bd ui-cell-primary">
-            <input class="ui-input" type="datetime-local" name="date" id="date" placeholder="请选择时间">
+            <input class="ui-input" type="datetime-local" name="checkupTime" id="date" placeholder="请选择时间">
         </div>
     </div>
-    <div class="ui-cell ui-cell-select">
-        <div class="ui-cell-hd">
-            <label class="ui-label">省</label>
-        </div>
-        <div class="ui-cell-bd ui-cell-primary">
-            <select name="province" id="province" class="ui-select">
-                <option value="">浙江省</option>
-                <option value="">上海市</option>
-            </select>
-        </div>
-    </div>
-    <div class="ui-cell ui-cell-select">
-        <div class="ui-cell-hd">
-            <label class="ui-label">市</label>
-        </div>
-        <div class="ui-cell-bd ui-cell-primary">
-            <select name="city" id="city" class="ui-select">
-                <option value="">杭州市</option>
-                <option value="">温州市</option>
-            </select>
-        </div>
-    </div>
-    <div class="ui-cell ui-cell-select">
-        <div class="ui-cell-hd">
-            <label class="ui-label">区</label>
-        </div>
-        <div class="ui-cell-bd ui-cell-primary">
-            <select name="area" id="area" class="ui-select">
-                <option value="">上城区</option>
-                <option value="">下城区</option>
-            </select>
-        </div>
-    </div>
+    #if($memberLocation)
     <div class="ui-cell">
         <div class="ui-cell-hd">
-            <label class="ui-label">地址</label>
+            <label class="ui-label">体检城市</label>
+        </div>
+        <div class="ui-cell-bd ui-cell-primary">
+            <input class="ui-input" type="text" name="city" value="$!memberLocation.province $!memberLocation.city $!memberLocation.county" readonly id="city" >
+        </div>
+    </div>
+    #end
+    <div class="ui-cell">
+        <div class="ui-cell-hd">
+            <label class="ui-label">体检地址</label>
         </div>
         <div class="ui-cell-bd ui-cell-primary">
             <input class="ui-input" type="text" name="address" id="address" placeholder="请输入您的详细地址">
@@ -54,45 +31,39 @@
             <label class="ui-label">快检手</label>
         </div>
         <div class="ui-cell-bd ui-cell-primary">
-            <input class="ui-input" type="text" name="doctor" id="doctor" readonly="true" placeholder="请选择">
+            <input class="ui-input" type="text" name="checkerName" id="doctor" readonly="true" placeholder="请选择">
         </div>
         <div class="ui-cell-ft"></div>
     </div>
     <div class="ui-form-btns">
         <a href="javascript:" class="ui-btn ui-btn-primary" id="save">确认下单</a>
     </div>
-    <input type="hidden" name="packetId" value="$packet.id">
+    <input type="hidden" id="packetId" name="packetId" value="$packet.id">
     <input type="hidden" name="checkerId" id="doctor-id">
 </form>
 <!-- 弹出选择的快检手列表 -->
 <div class="bd hide" id="select-list">
-    <div class="ui-alert">暂无快检手</div>
-    <div class="ui-suit" data-id="1">
-        <div class="ui-suit-hd">
-            <div class="primary"></div>
-            <div class="state">距离3000m</div>
-        </div>
-        <div class="ui-suit-bd">
-            <div class="img"><img src="http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/"></div>
-            <div class="primary">
-                <div class="title">快检手名字1</div>
-                <div class="txt">介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍介绍</div>
+    #if($checkers.size() == 0)
+        <div class="ui-alert">暂无快检手</div>
+    #else
+        #foreach($checker in $checkers)
+            <div class="ui-suit" data-id="1">
+                <div class="ui-suit-hd">
+                    <div class="primary"></div>
+                    <div class="state">距离$distanceUnitMap.get($checker.memberId)</div>
+                </div>
+                <div class="ui-suit-bd">
+                    <div class="img"><img src="$!memberMap.get($checker.memberId).avatar"></div>
+                    <div class="primary">
+                        <div class="title">$checker.name</div>
+                        <div class="txt">$checker.description</div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="ui-suit" data-id="2">
-        <div class="ui-suit-hd">
-            <div class="primary"></div>
-            <div class="state">距离3000m</div>
-        </div>
-        <div class="ui-suit-bd">
-            <div class="img"><img src="http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/"></div>
-            <div class="primary">
-                <div class="title">快检手名字2</div>
-                <div class="txt">介绍介绍介绍</div>
-            </div>
-        </div>
-    </div>
+        #end
+    #end
+
+
 </div>
 <!-- /.弹出选择的快检手列表 -->
 <script src="$staticServer.get('lib/zepto.min.js')"></script>
@@ -147,18 +118,35 @@
             //把name显示到input
             $('#get-select').find('input').val(name);
             //吧id写到隐藏域？
-            // $('#doctor-id').val(id);
+            $('#doctor-id').val(id);
             window.history.back();
         });
         //保存按钮
         $('#save').on('click',function(){
             if(check()){
-                var param = $('#place-order-form').serializeArray();
-                // var param = $('#place-order-form').serialize();
+                //var param = $('#place-order-form').serializeArray();
+                //console.log(param);
+                //取出时间格式化
+                var d = $.formatLocal($('#date').val());
+                //取出时间格式化 加上秒
+                var checkupTime = new Date(d).Format("yyyy-MM-dd hh:mm:ss");
+                var city = $("#city").val();
+                var address = $("#address").val();
+                var packetId = $("#packetId").val();
+                var checkerId = $("#doctor-id").val();
+                var param = {
+                    "checkupTime":checkupTime,
+                    "city" : city,
+                    "address" : address,
+                    "packetId" : packetId,
+                    "checkerId" : checkerId
+                }
+
                 //提交
-                $.pajax('id1','url','type',param,function(data){
+                $.pajax('id1','/order/submit.htm','POST',param,function(data){
                     //ajax返回的data
                     console.log(data);
+                    window.location.href = "/order/detail.htm?id="+ data.data;
                 });
             }
         });

@@ -29,4 +29,6 @@ public interface CheckerManager {
 
     List<Checker> findByMemberIds(List<Long> memberId);
 
+    List<Checker> findByPacketId(Integer packetId);
+
 }

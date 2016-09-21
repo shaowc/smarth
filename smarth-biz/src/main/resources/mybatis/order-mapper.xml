@@ -9,6 +9,8 @@
             <if test="outTradeNo != null"> out_trade_no = #{outTradeNo},</if>
             <if test="prepayId != null"> prepay_id = #{prepayId},</if>
             <if test="gmtPrepayIdValid != null"> gmt_prepay_id_valid = #{gmtPrepayIdValid},</if>
+            <if test="payStatus != null"> pay_status = #{payStatus},</if>
+            <if test="gmtPay != null"> gmt_pay = #{gmtPay},</if>
         </set>
         WHERE id =#{id}
     </update>

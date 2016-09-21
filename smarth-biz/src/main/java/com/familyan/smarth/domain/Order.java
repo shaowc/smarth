@@ -1,5 +1,7 @@
 package com.familyan.smarth.domain;
 
+import java.util.Date;
+
 /**
  * Created by ibator.
  */
@@ -43,23 +45,7 @@ public class Order {
      */
     private java.util.Date checkupTime;
 
-    /**
-     * 
-     *
-     */
-    private Integer provinceId;
-
-    /**
-     * 
-     *
-     */
-    private Integer cityId;
-
-    /**
-     * 
-     *
-     */
-    private Integer countyId;
+    private String city;
 
     /**
      * 
@@ -86,6 +72,10 @@ public class Order {
      *
      */
     private java.util.Date gmtPrepayIdValid;
+
+    private Integer payStatus;
+
+    private Date gmtPay;
 
     /**
      * 
@@ -157,28 +147,12 @@ public class Order {
         this.checkupTime = checkupTime;
     }
 
-    public Integer getProvinceId() {
-        return provinceId;
+    public String getCity() {
+        return city;
     }
 
-    public void setProvinceId(Integer provinceId) {
-        this.provinceId = provinceId;
-    }
-
-    public Integer getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(Integer cityId) {
-        this.cityId = cityId;
-    }
-
-    public Integer getCountyId() {
-        return countyId;
-    }
-
-    public void setCountyId(Integer countyId) {
-        this.countyId = countyId;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getAddress() {
@@ -219,6 +193,22 @@ public class Order {
 
     public void setGmtPrepayIdValid(java.util.Date gmtPrepayIdValid) {
         this.gmtPrepayIdValid = gmtPrepayIdValid;
+    }
+
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
+    }
+
+    public Date getGmtPay() {
+        return gmtPay;
+    }
+
+    public void setGmtPay(Date gmtPay) {
+        this.gmtPay = gmtPay;
     }
 
     public java.util.Date getGmtCreate() {

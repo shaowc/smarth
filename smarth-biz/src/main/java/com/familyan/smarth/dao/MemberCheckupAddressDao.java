@@ -13,7 +13,7 @@ public interface MemberCheckupAddressDao {
 
     @Select("<script>" +
             "SELECT * FROM MEMBER_CHECKUP_ADDRESS WHERE id IN " +
-            "<foreach collection='list' open='(' close=')' index='index' item='item' sepator=','>" +
+            "<foreach collection='list' open='(' close=')' index='index' item='item' separator=','>" +
             " #{item} " +
             "</foreach>" +
             "</script>")

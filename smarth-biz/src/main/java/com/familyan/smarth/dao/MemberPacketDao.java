@@ -14,7 +14,7 @@ public interface MemberPacketDao {
 
     @Select("<script>" +
             "SELECT * FROM CK_MEMBER_PACKET WHERE id IN " +
-            "<foreach collection='list' open='(' close=')' index='index' item='item' sepator=','>" +
+            "<foreach collection='list' open='(' close=')' index='index' item='item' separator=','>" +
             " #{item} " +
             "</foreach>" +
             "</script>")
@@ -31,6 +31,9 @@ public interface MemberPacketDao {
 
     @Select("SELECT * FROM CK_MEMBER_PACKET WHERE member_id=#{memberId}")
     List<MemberPacket> findByMemberId(Long memberId);
+
+    @Select("SELECT * FROM CK_MEMBER_PACKET WHERE packet_id=#{packetId}")
+    List<MemberPacket> findByPacketId(Integer packetId);
 
 
 }

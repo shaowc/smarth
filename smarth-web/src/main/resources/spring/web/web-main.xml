@@ -159,12 +159,42 @@
                             <property name="redirectUrl" value="${weixin.redirectUrl}" />
                             <property name="scope" value="snsapi_userinfo" />
                      </bean>
+
               </mvc:interceptor>
               <!-- 需要登录页面的账号验证  -->
               <bean class="com.familyan.smarth.web.interceptor.MemberLoginInterceptor" >
                      <property name="clazz" value="com.familyan.smarth.domain.LoginMember" />
                      <property name="exposeToAttr" value="true" />
               </bean>
+              <mvc:interceptor>
+                     <mvc:mapping path="/**"/>
+                     <mvc:exclude-mapping path="/packet/list.htm" />
+                     <mvc:exclude-mapping path="/bind-phone.htm" />
+                     <mvc:exclude-mapping path="/perfect-info.htm" />
+                     <mvc:exclude-mapping path="/wechat/*" />
+                     <mvc:exclude-mapping path="/wechatPay/*" />
+                     <mvc:exclude-mapping path="/error.htm" />
+                     <mvc:exclude-mapping path="/check.htm" />
+                     <mvc:exclude-mapping path="/404.htm" />
+                     <mvc:exclude-mapping path="/index.htm" />
+                     <bean class="com.familyan.smarth.web.interceptor.MobileInterceptor" />
+              </mvc:interceptor>
+
+              <mvc:interceptor>
+                     <mvc:mapping path="/**"/>
+                     <mvc:exclude-mapping path="/packet/list.htm" />
+                     <mvc:exclude-mapping path="/bind-phone.htm" />
+                     <mvc:exclude-mapping path="/perfect-info.htm" />
+                     <mvc:exclude-mapping path="/wechat/*" />
+                     <mvc:exclude-mapping path="/wechatPay/*" />
+                     <mvc:exclude-mapping path="/error.htm" />
+                     <mvc:exclude-mapping path="/check.htm" />
+                     <mvc:exclude-mapping path="/404.htm" />
+                     <mvc:exclude-mapping path="/index.htm" />
+                     <bean class="com.familyan.smarth.web.interceptor.PerfectInfoInterceptor" />
+              </mvc:interceptor>
+
+              <bean class="com.familyan.smarth.web.interceptor.WechatJsInterceptor" />
        </mvc:interceptors>
 
        <!-- exception resolver -->

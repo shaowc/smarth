@@ -1,12 +1,7 @@
 package com.familyan.smarth.manager.impl;
 
-import com.familyan.smarth.dao.CheckerDao;
-import com.familyan.smarth.dao.MemberCheckerDao;
-import com.familyan.smarth.dao.MemberDao;
-import com.familyan.smarth.domain.Checker;
-import com.familyan.smarth.domain.CheckerDTO;
-import com.familyan.smarth.domain.Member;
-import com.familyan.smarth.domain.MemberChecker;
+import com.familyan.smarth.dao.*;
+import com.familyan.smarth.domain.*;
 import com.familyan.smarth.manager.CheckerManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -31,6 +26,10 @@ public class CheckerManagerImpl implements CheckerManager {
     private MemberDao memberDao;
     @Autowired
     private MemberCheckerDao memberCheckerDao;
+    @Autowired
+    private MemberLocationDao memberLocationDao;
+    @Autowired
+    private MemberPacketDao memberPacketDao;
 
     @Override
     @Transactional
@@ -42,15 +41,14 @@ public class CheckerManagerImpl implements CheckerManager {
             memberDO.setId(checker.getMemberId());
             memberDO.setGender(checker.getGender());
             //member.setBirthday(checker.getBirthday());
-            memberDO.setFeatures("1");
             memberDao.update(memberDO);
+            memberLocationDao.updateType(checker.getMemberId(), 1);
         } else {
             Member memberDO = new Member();
             memberDO.setRealName(checker.getName());
             memberDO.setId(checker.getMemberId());
             memberDO.setGender(checker.getGender());
             //member.setBirthday(checker.getBirthday());
-            memberDO.setFeatures("1");
             memberDao.update(memberDO);
             checkerDao.update(checker);
         }
@@ -84,6 +82,21 @@ public class CheckerManagerImpl implements CheckerManager {
 
     public List<Checker> findByMemberIds(List<Long> checkerIds) {
         return checkerDao.findByMemberIds(checkerIds);
+    }
+
+    @Override
+    public List<Checker> findByPacketId(Integer packetId) {
+        List<MemberPacket> memberPackets = memberPacketDao.findByPacketId(packetId);
+        if(memberPackets.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Long> checkerIds = Lists.transform(memberPackets, new Function<MemberPacket, Long>() {
+            @Override
+            public Long apply(MemberPacket input) {
+                return input.getMemberId();
+            }
+        });
+        return findByMemberIds(checkerIds);
     }
 
     @Override

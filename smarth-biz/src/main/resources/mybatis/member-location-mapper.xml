@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.familyan.smarth.dao.MemberLocationDao">
+
+    <update id="update" parameterType="memberLocation" >
+        UPDATE CK_ORDER
+        <set>
+            <if test="longitude != null"> longitude = #{longitude},</if>
+            <if test="latitude != null"> latitude = #{latitude},</if>
+            <if test="prepayId != null"> prepay_id = #{prepayId},</if>
+        </set>
+        WHERE id =#{id}
+    </update>
+
+</mapper>

@@ -21,7 +21,7 @@ import java.io.IOException;
  */
 public class MobileInterceptor extends HandlerInterceptorAdapter {
 
-    private String redirectUrl = "bind-phone.htm";
+    private String redirectUrl = "/bind-phone.htm";
 
     @Autowired
     private MemberService memberService;
@@ -35,8 +35,8 @@ public class MobileInterceptor extends HandlerInterceptorAdapter {
             MemberDTO memberDTO = memberService.findById(loginMember.getId());
             if(StringUtils.isBlank(memberDTO.getMobile())) {
                 redirectToBindMobile(request, response);
+                return false;
             }
-            return false;
         }
 
         return super.preHandle(request, response, handler);

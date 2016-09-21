@@ -19,5 +19,7 @@ public interface OrderManager {
 
     void modify(Order order);
 
+    Order findByOutTradeNo(String outTradeNo);
+
 
 }

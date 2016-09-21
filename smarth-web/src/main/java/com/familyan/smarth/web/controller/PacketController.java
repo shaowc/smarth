@@ -52,7 +52,7 @@ public class PacketController {
     public String mylist(LoginMember loginMember, WechatOpenId openId, ModelMap modelMap) {
         List<Packet> packets = packetManager.findByMemberId(loginMember.getId());
         modelMap.put("packets", packets);
-        return "packet/list";
+        return "packet/mylist";
     }
 
     @RequestMapping("detail")

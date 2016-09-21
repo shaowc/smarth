@@ -32,9 +32,6 @@ public class SubscribeFunction implements WechatFunction {
     @Value("${top.domain}")
     String topDomain;
 
-    @Value("${weixin.haggle.templateId}")
-    String templateId;
-
     @Autowired
     WechatApi api;
 
@@ -113,6 +110,7 @@ public class SubscribeFunction implements WechatFunction {
             //newMemberDto.setPassword("123456");
             newMemberDto.setGender(info.getSex());
             newMemberDto.setRealName(info.getNickName());
+            newMemberDto.setAvatar(info.getHeadImgUrl());
             newMemberDto.setWeixinId(info.getUnionId());
 
             memberDTO = memberService.regMember(BindType.WEIXIN,newMemberDto);

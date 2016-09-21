@@ -9,7 +9,6 @@
               <property name="state" value="haggle" />
        </bean>
 
-       <!--
        <bean id="wechatPayApi" class="com.lotus.wechat.pay.WechatPayApiImpl">
               <constructor-arg index="0" value="${weixin.appId}" />
               <constructor-arg index="1" value="${weixin.pay.mchId}" />
@@ -18,7 +17,8 @@
               <property name="mchName" value="${weixin.mch.name}" />
               <property name="serverIp" value="${server.ip}" />
        </bean>
-       -->
+
+       <bean id="orderPay" class="com.familyan.smarth.pay.WechatOrderPay" />
 
        <bean id="wechatEngine" class="com.lotus.wechat.message.WechatEngine">
               <property name="functions">
@@ -31,9 +31,12 @@
                                    </property>
 
                             </bean>
+                            <bean class="com.familyan.smarth.function.LocationEventFunction" />
+                            <bean class="com.familyan.smarth.function.KeyValueFunction" />
 
                      </list>
               </property>
        </bean>
+
 
 </beans>

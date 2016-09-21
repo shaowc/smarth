@@ -82,11 +82,10 @@ public class WechatController {
                 openId.setSubscribe(info.getSubscribe());
                 openId.setUnionId(info.getUnionId());
                 openId.setNickName(info.getNickName());
-
-                cookyjar.set(openId , 60);
-
                 // 是否注册
                 MemberWechatDTO memberWechatDTO = saveAndGet(info);
+                cookyjar.set(openId , 600);
+
                 // 自动登录掉
                 try {
 
@@ -106,7 +105,6 @@ public class WechatController {
                 }
                 return "redirect:" + url;
             } catch (WechatException e) {
-                cookyjar.remove(WechatOpenId.class);
                 result.put("msg", e.getMessage());
                 return "forward:/error.htm";
             }
@@ -136,6 +134,8 @@ public class WechatController {
     public String response(String signature, String timestamp, String nonce, HttpServletRequest request) {
         try {
             String xml = IOUtils.toString(request.getInputStream(), "UTF-8");
+            System.out.println(xml);
+            log.debug(xml);
             return engine.onMessage(xml);
         } catch (WechatException | IOException e) {
             log.error(e);
@@ -154,7 +154,7 @@ public class WechatController {
             newMemberDto.setGender(info.getSex());
             newMemberDto.setRealName(info.getNickName());
             newMemberDto.setWeixinId(info.getUnionId());
-            log.info(newMemberDto.getWeixinId());
+            newMemberDto.setAvatar(info.getHeadImgUrl());
             memberDTO = memberService.regMember(BindType.WEIXIN,newMemberDto);
 
             // 新增，避免覆盖subscribe信息

@@ -15,7 +15,7 @@ public interface PacketDao {
 
     @Select("<script>" +
             "SELECT * FROM CK_PACKET WHERE id IN " +
-            "<foreach collection='list' open='(' close=')' index='index' item='item' sepator=','>" +
+            "<foreach collection='list' open='(' close=')' index='index' item='item' separator=','>" +
             " #{item} " +
             "</foreach>" +
             "</script>")

@@ -2,21 +2,29 @@ package com.familyan.smarth.web.controller;
 
 import com.familyan.smarth.domain.*;
 import com.familyan.smarth.manager.CheckerManager;
+import com.familyan.smarth.manager.MemberLocationManager;
 import com.familyan.smarth.manager.OrderManager;
 import com.familyan.smarth.manager.PacketManager;
 import com.familyan.smarth.service.MemberService;
+import com.familyan.smarth.utils.LocationUtils;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.lotus.service.result.PageResult;
 import com.lotus.service.result.Result;
 import com.lotus.wechat.WechatOpenId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Arrays;
-import java.util.List;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by shaowenchao on 16/9/12.
@@ -33,6 +41,13 @@ public class OrderController {
     private PacketManager packetManager;
     @Autowired
     private CheckerManager checkerManager;
+    @Autowired
+    private MemberLocationManager memberLocationManager;
+
+    @InitBinder
+    public  void initBinder(WebDataBinder binder){
+        binder.registerCustomEditor(Date.class,new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),true));
+    }
 
     /**
      * 我的订单, 普通用户
@@ -58,6 +73,55 @@ public class OrderController {
     @RequestMapping("place-packet")
     public String placePacket(LoginMember loginMember, Integer packetId, ModelMap modelMap) {
         Packet packet = packetManager.findById(packetId);
+        MemberLocation memberLocation = memberLocationManager.findByMemberId(loginMember.getId());
+        modelMap.put("memberLocation", memberLocation);
+        List<Checker> checkers = checkerManager.findByPacketId(packetId);
+        modelMap.put("checkers", checkers);
+
+        List<Long> memberIds = Lists.transform(checkers, new Function<Checker, Long>() {
+            @Override
+            public Long apply(Checker input) {
+                return input.getMemberId();
+            }
+        });
+
+        Map<Long, MemberDTO> memberMap = memberService.findByIds(memberIds);
+        modelMap.put("memberMap", memberMap);
+
+        if(!checkers.isEmpty()) {
+
+            final Map<Long, Double> distanceMap = new HashMap<>();
+            Map<Long, String> distanceUnitMap = new HashMap<>();
+            List<MemberLocation> checkerLocations = memberLocationManager.findByMemberIds(memberIds);
+            for (MemberLocation location : checkerLocations) {
+                double distance = LocationUtils.getDistance(memberLocation.getLongitude().doubleValue(), memberLocation.getLatitude().doubleValue(), location.getLongitude().doubleValue(), location.getLatitude().doubleValue());
+                distanceMap.put(location.getMemberId(), distance);
+                String distanceWithUnit;
+                if(distance < 1000){
+                    distanceWithUnit = String.valueOf(distance) + "m";
+                }else{
+                    distanceWithUnit = String.valueOf(new BigDecimal(distance / 1000.0).setScale(2,   BigDecimal.ROUND_HALF_UP).doubleValue()) + "km";
+                }
+                distanceUnitMap.put(location.getMemberId(), distanceWithUnit);
+
+            }
+            modelMap.put("distanceUnitMap", distanceUnitMap);
+            Collections.sort(checkers, new Comparator<Checker>() {
+                @Override
+                public int compare(Checker o1, Checker o2) {
+                    double distance1 = distanceMap.get(o1.getMemberId());
+                    double distance2 = distanceMap.get(o2.getMemberId());
+                    if(distance1 > distance2) {
+                        return 1;
+                    } else if(distance1 == distance2) {
+                        return 0;
+                    } else {
+                        return -1;
+                    }
+                }
+            });
+        }
+
         modelMap.put("packet", packet);
         return "order/place-order-1";
     }
@@ -68,7 +132,8 @@ public class OrderController {
      */
     @RequestMapping("place-checker")
     public String placeChecker(LoginMember loginMember, Long checkerId, ModelMap modelMap) {
-        modelMap.put("checkerId", checkerId);
+        Checker checker = checkerManager.findByMemberId(checkerId);
+        modelMap.put("checker", checker);
         List<Packet> packets = packetManager.findByMemberId(checkerId);
         modelMap.put("packets", packets);
         return "order/place-order-2";
@@ -88,7 +153,7 @@ public class OrderController {
         order.setMemberId(loginMember.getId());
         Long checkerId = order.getCheckerId();
         MemberDTO memberDTO = memberService.findById(checkerId);
-        if(memberDTO.getFeatures() == null || !memberDTO.getFeatures().contains(1)) {
+        if(memberDTO.getFeatures() == null || !memberDTO.getFeatures().contains(1l)) {
             return Result.error("未选择快检手");
         }
 
@@ -99,6 +164,7 @@ public class OrderController {
 
         order.setPrice(packet.getPrice());
         order.setStatus(0);
+        order.setPackageContent(packet.getContent());
         orderManager.add(order);
         return Result.success(1);
     }
@@ -190,7 +256,7 @@ public class OrderController {
 
         order.setStatus(4);
         orderManager.modify(order);
-        return Result.success(1);
+        return Result.success(order.getId());
     }
 
     /**

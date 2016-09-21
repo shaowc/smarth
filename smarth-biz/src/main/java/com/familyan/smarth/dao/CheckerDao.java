@@ -15,7 +15,7 @@ public interface CheckerDao {
 
     @Select("<script>" +
             "SELECT * FROM CK_CHECKER WHERE id IN " +
-            "<foreach collection='list' open='(' close=')' index='index' item='item' sepator=','>" +
+            "<foreach collection='list' open='(' close=')' index='index' item='item' separator=','>" +
             " #{item} " +
             "</foreach>" +
             "</script>")
@@ -32,7 +32,7 @@ public interface CheckerDao {
 
     @Select("<script>" +
             "SELECT * FROM CK_CHECKER WHERE member_id IN " +
-            "<foreach collection='list' open='(' close=')' index='index' item='item' sepator=','>" +
+            "<foreach collection='list' open='(' close=')' index='index' item='item' separator=','>" +
             " #{item} " +
             "</foreach>" +
             "</script>")

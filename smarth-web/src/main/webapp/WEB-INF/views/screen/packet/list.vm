@@ -15,7 +15,7 @@
             <div class="dt primary">
                 <span class="price">￥#currency($item.price, '#.##')</span>
             </div>
-            <div class="dd"><a href="/order/place-packet.htm" class="ui-btn ui-btn-mini ui-btn-default">我要体检</a></div>
+            <div class="dd"><a href="/order/place-packet.htm?packetId=$item.id" class="ui-btn ui-btn-mini ui-btn-default">我要体检</a></div>
         </div>
     </div>
     #end

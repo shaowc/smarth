@@ -32,11 +32,15 @@
         </div>
         <div class="ui-read-input">
             <div class="label">联系电话</div>
-            <div class="txt primary"><a href="tel:123456789" class="ui-link">$!checker.mobile</a></div>
+            <div class="txt primary"><a href="tel:$!checker.mobile" class="ui-link">$!checker.mobile</a></div>
         </div>
         <div class="ui-read-input">
             <div class="label">预约时间</div>
             <div class="txt primary">$dateTool.format('yyyy-MM-dd HH:mm:ss', $order.checkupTime)</div>
+        </div>
+        <div class="ui-read-input">
+            <div class="label">检查城市</div>
+            <div class="txt primary">$order.city</div>
         </div>
         <div class="ui-read-input">
             <div class="label">检查地址</div>
@@ -89,6 +93,7 @@
                 $.pajax('id1','/order/cancel.htm','POST','id=$order.id',function(data){
                     //ajax返回的data
                     console.log(data);
+                    window.location.reload();
                 });
             });
         });
@@ -102,9 +107,58 @@
                 $.pajax('id2','/order/receive.htm','POST','id=$order.id',function(data){
                     //ajax返回的data
                     console.log(data);
+                    window.location.reload();
                 });
             })
         });
+
+
+        //开团，参团付钱的按钮
+        $('#submit').on('click',function(){
+            pay(${order.id});
+        });
+
+        function pay(orderId) {
+            $.ajax({
+                url: '/orderPay/unified.htm',
+                type: 'POST',
+                dataType: 'json',
+                data: {'orderId' : orderId},
+                cache: false,
+                timeout: 10000,
+                beforeSend: function(){
+
+                },success: function(resp){
+                    if (resp.success) {
+                        _topay(resp.data.payParams);
+                    } else {
+                        $.Tip({'id':'error','content':'调用支付失败，请在微信中支付'});
+                    }
+
+                },error: function(){
+                    $.Tip({'id':'error','content':'支付失败，请稍后重试'});
+                },complete: function(){
+
+                }
+            });
+        }
+
+        function _topay(payParams) {
+            WeixinJSBridge.invoke('getBrandWCPayRequest',
+                    {
+                        "appId" :payParams.appId,    //公众号名称，由商户传入
+                        "timeStamp":payParams.timeStamp,        //时间戳，自1970年以来的秒数
+                        "nonceStr" :payParams.nonceStr, //随机串
+                        "package" : payParams.package,
+                        "signType" : payParams.signType,         //微信签名方式：
+                        "paySign" : payParams.paySign //微信签名
+                    },
+                    function (res) {
+                        if (res.err_msg == "get_brand_wcpay_request:ok") {
+                            window.location.reload();
+                        }
+                    });
+        }
 
     });
 </script>

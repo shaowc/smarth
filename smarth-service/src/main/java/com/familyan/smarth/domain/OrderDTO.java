@@ -10,10 +10,6 @@ import java.util.List;
 public class OrderDTO implements Serializable {
     private static final long serialVersionUID = -7724131053105173973L;
 
-    /**
-     *
-     *
-     */
     private Integer id;
 
     /**
@@ -48,28 +44,8 @@ public class OrderDTO implements Serializable {
      */
     private java.util.Date checkupTime;
 
-    /**
-     *
-     *
-     */
-    private Integer provinceId;
+    private String city;
 
-    /**
-     *
-     *
-     */
-    private Integer cityId;
-
-    /**
-     *
-     *
-     */
-    private Integer countyId;
-
-    /**
-     *
-     *
-     */
     private String address;
 
     private Integer status;
@@ -86,16 +62,8 @@ public class OrderDTO implements Serializable {
      */
     private String prepayId;
 
-    /**
-     *
-     *
-     */
     private java.util.Date gmtPrepayIdValid;
 
-    /**
-     *
-     *
-     */
     private java.util.Date gmtCreate;
 
     /**
@@ -164,28 +132,12 @@ public class OrderDTO implements Serializable {
         this.checkupTime = checkupTime;
     }
 
-    public Integer getProvinceId() {
-        return provinceId;
+    public String getCity() {
+        return city;
     }
 
-    public void setProvinceId(Integer provinceId) {
-        this.provinceId = provinceId;
-    }
-
-    public Integer getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(Integer cityId) {
-        this.cityId = cityId;
-    }
-
-    public Integer getCountyId() {
-        return countyId;
-    }
-
-    public void setCountyId(Integer countyId) {
-        this.countyId = countyId;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getAddress() {

@@ -42,7 +42,7 @@ public class CheckerDTO implements Serializable {
      * 出生日期
      *
      */
-    private java.util.Date birthday;
+    private String birthday;
 
     /**
      * 身份证照片
@@ -134,11 +134,11 @@ public class CheckerDTO implements Serializable {
         this.gender = gender;
     }
 
-    public java.util.Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(java.util.Date birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 
