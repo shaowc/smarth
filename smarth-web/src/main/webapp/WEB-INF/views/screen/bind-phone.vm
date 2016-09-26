@@ -20,13 +20,12 @@
     </div>
     <input type="hidden" name="hidephone" id="hidephone">
     <input type="hidden" name="identifier" id="hidecodekey">
-    <input type="hidden" name="url" id="url" value="$!url">
     <input type="hidden" name="latitude" id="latitude" value="">
     <input type="hidden" name="longitude" id="longitude" value="">
 
 </form>
 <script src="$staticServer.get('lib/zepto.min.js')"></script>
-<script src="$staticServer.get('js/physical.js')"></script>
+<script src="$staticServer.get('js/physical.min.js')"></script>
 
 <script>
 

@@ -67,7 +67,7 @@ public class HomeController {
      */
     @RequestMapping(value = "bind-phone", method = RequestMethod.POST)
     @ResponseBody
-    public Result bindPhone(LoginMember loginMember, String mobile, String identifier, String code, String latitude, String longitude, HttpServletResponse response, String url) {
+    public Result bindPhone(LoginMember loginMember, String mobile, String identifier, String code, String latitude, String longitude) {
 //        boolean valid = smsService.validateSmsVerifyCode(identifier, code, mobile);
 //        if (!valid) {
 //            return Result.error("验证码错误");
@@ -103,13 +103,6 @@ public class HomeController {
 
         }
 
-        if (StringUtils.isNotBlank(url)) {
-            try {
-                response.sendRedirect(url);
-            } catch (IOException e) {
-                logger.error(e.getMessage());
-            }
-        }
         return Result.success(1);
     }
 

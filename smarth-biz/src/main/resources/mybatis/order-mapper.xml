@@ -11,6 +11,8 @@
             <if test="gmtPrepayIdValid != null"> gmt_prepay_id_valid = #{gmtPrepayIdValid},</if>
             <if test="payStatus != null"> pay_status = #{payStatus},</if>
             <if test="gmtPay != null"> gmt_pay = #{gmtPay},</if>
+            <if test="checkupResult != null"> checkup_result = #{checkupResult},</if>
+            <if test="checkupRemark != null"> checkup_remark = #{checkupRemark},</if>
         </set>
         WHERE id =#{id}
     </update>

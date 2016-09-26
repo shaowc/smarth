@@ -39,6 +39,8 @@ public class Order {
      */
     private String packageContent;
 
+    private String checkupResult;
+
     /**
      * 预约体检时间
      *
@@ -89,6 +91,10 @@ public class Order {
      * 默认值：CURRENT_TIMESTAMP
      */
     private java.util.Date gmtModify;
+
+    private String remark;
+
+    private String checkupRemark;
 
 
     public Integer getId() {
@@ -227,5 +233,28 @@ public class Order {
         this.gmtModify = gmtModify;
     }
 
+    public String getCheckupResult() {
+        return checkupResult;
+    }
+
+    public void setCheckupResult(String checkupResult) {
+        this.checkupResult = checkupResult;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getCheckupRemark() {
+        return checkupRemark;
+    }
+
+    public void setCheckupRemark(String checkupRemark) {
+        this.checkupRemark = checkupRemark;
+    }
 }
 

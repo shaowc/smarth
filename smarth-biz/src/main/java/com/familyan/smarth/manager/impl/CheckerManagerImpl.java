@@ -36,20 +36,8 @@ public class CheckerManagerImpl implements CheckerManager {
     public void save(Checker checker) {
         if(checker.getId() == null || checker.getId() == 0) {
             checkerDao.insert(checker);
-            Member memberDO = new Member();
-            memberDO.setRealName(checker.getName());
-            memberDO.setId(checker.getMemberId());
-            memberDO.setGender(checker.getGender());
-            //member.setBirthday(checker.getBirthday());
-            memberDao.update(memberDO);
             memberLocationDao.updateType(checker.getMemberId(), 1);
         } else {
-            Member memberDO = new Member();
-            memberDO.setRealName(checker.getName());
-            memberDO.setId(checker.getMemberId());
-            memberDO.setGender(checker.getGender());
-            //member.setBirthday(checker.getBirthday());
-            memberDao.update(memberDO);
             checkerDao.update(checker);
         }
     }
@@ -81,6 +69,8 @@ public class CheckerManagerImpl implements CheckerManager {
     }
 
     public List<Checker> findByMemberIds(List<Long> checkerIds) {
+        if (checkerIds == null || checkerIds.isEmpty())
+            return Collections.emptyList();
         return checkerDao.findByMemberIds(checkerIds);
     }
 

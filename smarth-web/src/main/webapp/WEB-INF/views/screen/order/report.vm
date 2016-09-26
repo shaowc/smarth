@@ -1,39 +1,43 @@
 #set($title = '填写体检报告')
 
 <div class="bd">
-    <div class="ui-read-title">订单信息</div>
-    <div class="ui-read-group">
-        <div class="ui-read-input">
-            <div class="label">客户姓名</div>
-            <div class="txt primary">$member.realName</div>
-        </div>
-        <div class="ui-read-input">
-            <div class="label">体检时间</div>
-            <div class="txt primary">$order.checkupTime</div>
-        </div>
-    </div>
-    <div class="ui-read-title">体检项目</div>
-    <div class="ui-read-group">
-        #foreach($item in $items)
+    <form class="ui-form" id="report-form">
+        <div class="ui-read-title">订单信息</div>
+        <div class="ui-read-group">
             <div class="ui-read-input">
-                <div class="label">$item</div>
-                <div class="txt primary">
-                    <input type="text" name="$item" id="" class="ui-input" data-required placeholder="请填写">
-                </div>
+                <div class="label">客户姓名</div>
+                <div class="txt primary">$member.realName</div>
             </div>
-        #end
+            <div class="ui-read-input">
+                <div class="label">体检时间</div>
+                <div class="txt primary">$dateTool.format('yyyy-MM-dd HH:mm:ss', $order.checkupTime)</div>
+            </div>
+        </div>
+        <div class="ui-read-title">体检项目</div>
+        <div class="ui-read-group">
+            #foreach($item in $items)
+                <div class="ui-read-input">
+                    <div class="label">$item</div>
+                    <div class="txt primary">
+                        <input type="text" class="ui-input" name="checkupResult" data-required placeholder="请填写">
+                    </div>
+                </div>
+            #end
 
-    </div>
-    <div class="ui-read-title">备注</div>
-    <div class="ui-read-group">
-        <textarea name="remark" placeholder="备注" class="ui-textarea"></textarea>
-    </div>
-    <div class="ui-form-btns">
-        <a href="javascript:" class="ui-btn ui-btn-primary" id="savebtn">保存</a>
-    </div>
+        </div>
+        <div class="ui-read-title">备注</div>
+        <div class="ui-read-group">
+            <textarea id="remark" name="checkupRemark" placeholder="备注" class="ui-textarea"></textarea>
+        </div>
+        <div class="ui-form-btns">
+            <a href="javascript:" class="ui-btn ui-btn-primary" id="savebtn">保存</a>
+        </div>
+        <input type="hidden" name="id" value="$order.id">
+    </form>
 </div>
-<script src="lib/zepto.min.js"></script>
-<script src="js/physical.js"></script>
+
+<script src="$staticServer.get('lib/zepto.min.js')"></script>
+<script src="$staticServer.get('js/physical.min.js')"></script>
 <script>
     $(function(){
         //校验体检项目 必填
@@ -54,22 +58,11 @@
         //绑定保存按钮
         $('#savebtn').on('click',function(){
             if(check()){
-                var checkupResult = "";
-                $('input[data-required]').each(function(i,v){
-
-                    var val = $(v).val();
-                    var name = $(v).attr("name");
-                    checkupResult = '"'+ name+'":' + '"' + val + '",';
-                });
-                checkupResult = checkupResult.substr(0, checkupResult.length - 1);
-                checkupResult = "{" + checkupResult + "}";
-                var params = {};
-                params.id = '$order.id';
-                params.checkResult = checkupResult;
+                var param = $('#report-form').serializeArray();
                 //提交
-                $.pajax('id1','/order/report.htm','POST', params,function(data){
+                $.pajax('id1','/order/report.htm','POST', param,function(data){
                     //ajax返回的data
-                    console.log(data);
+                    window.location.href = '/order/checkerdetail.htm?id=$order.id';
                 });
             }
         });

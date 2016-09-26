@@ -1,5 +1,6 @@
 #set($title = '预约下单')
 <form class="ui-form" id="place-order-form">
+
     <div class="ui-cell">
         <div class="ui-cell-hd">
             <label class="ui-label">时间</label>
@@ -35,6 +36,18 @@
         </div>
         <div class="ui-cell-ft"></div>
     </div>
+    <!-- 体检包内容-->
+    <div class="ui-read-title">体检包内容</div>
+
+    <div class="ui-read-group">
+    #foreach($item in $items)
+        <div class="ui-read-input">
+            <div class="label">$item</div>
+            <div class="txt primary"></div>
+        </div>
+    #end
+    </div>
+
     <div class="ui-form-btns">
         <a href="javascript:" class="ui-btn ui-btn-primary" id="save">确认下单</a>
     </div>
@@ -47,10 +60,10 @@
         <div class="ui-alert">暂无快检手</div>
     #else
         #foreach($checker in $checkers)
-            <div class="ui-suit" data-id="1">
+            <div class="ui-suit" data-id="$checker.memberId">
                 <div class="ui-suit-hd">
                     <div class="primary"></div>
-                    <div class="state">距离$distanceUnitMap.get($checker.memberId)</div>
+                    <div class="state">距离$!distanceUnitMap.get($checker.memberId)</div>
                 </div>
                 <div class="ui-suit-bd">
                     <div class="img"><img src="$!memberMap.get($checker.memberId).avatar"></div>
@@ -67,7 +80,7 @@
 </div>
 <!-- /.弹出选择的快检手列表 -->
 <script src="$staticServer.get('lib/zepto.min.js')"></script>
-<script src="$staticServer.get('js/physical.js')"></script>
+<script src="$staticServer.get('js/physical.min.js')"></script>
 <script>
     $(function(){
         //根据hash显示隐藏方法
@@ -128,14 +141,13 @@
                 //console.log(param);
                 //取出时间格式化
                 var d = $.formatLocal($('#date').val());
-                //取出时间格式化 加上秒
-                var checkupTime = new Date(d).Format("yyyy-MM-dd hh:mm:ss");
+                console.log(d);
                 var city = $("#city").val();
                 var address = $("#address").val();
                 var packetId = $("#packetId").val();
                 var checkerId = $("#doctor-id").val();
                 var param = {
-                    "checkupTime":checkupTime,
+                    "checkupTime":d,
                     "city" : city,
                     "address" : address,
                     "packetId" : packetId,
@@ -146,7 +158,7 @@
                 $.pajax('id1','/order/submit.htm','POST',param,function(data){
                     //ajax返回的data
                     console.log(data);
-                    window.location.href = "/order/detail.htm?id="+ data.data;
+                    window.location.href = "/order/detail.htm?id="+ data;
                 });
             }
         });

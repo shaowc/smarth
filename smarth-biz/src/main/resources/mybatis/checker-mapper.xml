@@ -10,6 +10,7 @@
             <if test="gender != null"> gender = #{gender},</if>
             <if test="birthday != null"> birthday = #{birthday},</if>
             <if test="identifyPic != null"> identify_pic = #{identifyPic},</if>
+            <if test="identifyPic1 != null"> identify_pic1 = #{identifyPic1},</if>
             <if test="identifyPic2 != null"> identify_pic2 = #{identifyPic2},</if>
             <if test="qualificationPic != null"> qualification_pic = #{qualificationPic},</if>
             <if test="mobile != null"> mobile = #{mobile},</if>

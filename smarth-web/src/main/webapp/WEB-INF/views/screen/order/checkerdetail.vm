@@ -1,7 +1,7 @@
 #set($title = '订单详情')
 <!-- 订单状态 -->
 <div class="order-state">
-    <p class="title">#if($order.status==0)待接单#elseif($order.status==1)已接单，待付款#elseif($order.status==2)预约成功#elseif($order.status==3)服务完成#elseif($order.status==4)已取消#end</p>
+    <p class="title">#if($order.status==0)待接单#elseif($order.status==1)已接单，待支付#elseif($order.status==2)预约成功#elseif($order.status==3)服务完成#elseif($order.status==4)已取消#end</p>
     <p class="aux">$dateTool.format('yyyy-MM-dd HH:mm:ss', $order.gmtModify)</p>
 </div>
 <!-- 订单状态 -->
@@ -48,27 +48,27 @@
         </div>
     </div>
     #if($order.status != 3)
-    <!-- 体检报告 体检完成才有 -->
-    <div class="ui-read-title">体检内容</div>
-    <div class="ui-read-group">
-        #foreach($item in $items)
-        <div class="ui-read-input">
-            <div class="label">$item</div>
-            <div class="txt primary">待检查</div>
+        <!-- 体检报告 体检完成才有 -->
+        <div class="ui-read-title">体检包内容</div>
+        <div class="ui-read-group">
+            #foreach($item in $items)
+                <div class="ui-read-input">
+                    <div class="label">$item</div>
+                    <div class="txt primary">待检查</div>
+                </div>
+            #end
         </div>
-        #end
-    </div>
-    <!-- /.体检报告 -->
+        <!-- /.体检报告 -->
     #else
         <!-- 体检报告 体检完成才有 -->
         <div class="ui-read-title">体检报告</div>
         <div class="ui-read-group">
             #foreach($result in $results)
                 #set($idx = $velocityCount - 1)
-            <div class="ui-read-input">
-                <div class="label">$items[$idx]</div>
-                <div class="txt primary">$result</div>
-            </div>
+                <div class="ui-read-input">
+                    <div class="label">$items[$idx]</div>
+                    <div class="txt primary">$result</div>
+                </div>
             #end
             <div class="ui-read-input">
                 <div class="txt primary tal">$order.remark</div>
@@ -78,11 +78,11 @@
     #end
 
     <div class="ui-form-btns">
-        #if($order.status == 1)
-        <a href="javascript:" class="ui-btn ui-btn-primary" id="paybtn">立即付款</a>
-        #end
         #if($order.status == 0)
-        <a href="javascript:" class="ui-btn ui-btn-warn" id="cancelbtn">取消订单</a>
+        <a href="javascript:" class="ui-btn ui-btn-primary" id="acceptbtn">接单</a>
+        <a href="javascript:" class="ui-btn ui-btn-warn" id="cancelbtn">取消</a>
+        #elseif($order.status == 2)
+        <a href="/order/report.htm?orderId=$order.id" class="ui-btn ui-btn-primary">填写体检报告</a>
         #end
     </div>
 
@@ -97,7 +97,7 @@
                 //点确认的回调
                 console.log('点击了确认');
 
-                $.pajax('id1','/order/cancel.htm','POST','id=$order.id',function(data){
+                $.pajax('id1','/order/checkercancel.htm','POST','id=$order.id',function(data){
                     //ajax返回的data
                     console.log(data);
                     window.location.reload();
@@ -105,52 +105,19 @@
             });
         });
 
-        //付钱的按钮
-        $('#paybtn').on('click',function(){
-            pay(${order.id});
+        //接单按钮
+        $('#acceptbtn').on('click',function(){
+            $.comform('提示','接单前请务必电话确认',function(){
+                //点确认的回调
+                console.log('点击了确认');
+
+                $.pajax('id2','/order/receive.htm','POST','id=$order.id',function(data){
+                    //ajax返回的data
+                    console.log(data);
+                    window.location.reload();
+                });
+            })
         });
-
-        function pay(orderId) {
-            $.ajax({
-                url: '/orderPay/unified.htm',
-                type: 'POST',
-                dataType: 'json',
-                data: {'orderId' : orderId},
-                cache: false,
-                timeout: 10000,
-                beforeSend: function(){
-
-                },success: function(resp){
-                    if (resp.success) {
-                        _topay(resp.data);
-                    } else {
-                        $.Tip({'id':'error','content':'调用支付失败，请在微信中支付'});
-                    }
-
-                },error: function(){
-                    $.Tip({'id':'error','content':'支付失败，请稍后重试'});
-                },complete: function(){
-
-                }
-            });
-        }
-
-        function _topay(payParams) {
-            WeixinJSBridge.invoke('getBrandWCPayRequest',
-                    {
-                        "appId" :payParams.appId,    //公众号名称，由商户传入
-                        "timeStamp":payParams.timeStamp,        //时间戳，自1970年以来的秒数
-                        "nonceStr" :payParams.nonceStr, //随机串
-                        "package" : payParams.package,
-                        "signType" : payParams.signType,         //微信签名方式：
-                        "paySign" : payParams.paySign //微信签名
-                    },
-                    function (res) {
-                        if (res.err_msg == "get_brand_wcpay_request:ok") {
-                            window.location.reload();
-                        }
-                    });
-        }
 
     });
 </script>

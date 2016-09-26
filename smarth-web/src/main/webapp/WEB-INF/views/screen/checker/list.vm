@@ -7,22 +7,23 @@
                 <div class="state">距离$distanceUnitMap.get($checker.memberId)</div>
             </div>
             <div class="ui-suit-bd">
-                <div class="img"><img src="$memberMap.get($checker.memberId).avator"></div>
+                <div class="img"><img src="$!memberMap.get($checker.memberId).avatar"></div>
                 <div class="primary">
                     <div class="title">$checker.name</div>
                     <div class="txt">$checker.description</div>
                 </div>
             </div>
             <div class="ui-suit-fd">
-                <div class="dt primary"><a href="javascript:" class="ui-link del">删除</a></div>
+                <div class="dt primary"><a href="javascript:" class="ui-link del"> </a></div>
                 <div class="dd"><a href="/order/place-checker.htm?checkerId=$checker.memberId" class="ui-btn ui-btn-mini ui-btn-default">预约体检</a></div>
             </div>
         </div>
     #end
 
 </div>
+#navbar()
 <script src="$staticServer.get('lib/zepto.min.js')"></script>
-<script src="$staticServer.get('js/physical.js')"></script>
+<script src="$staticServer.get('js/physical.min.js')"></script>
 <script>
     $(function(){
         //所有删除按钮

@@ -1,11 +1,10 @@
-
-#set($title = '我的订单')
+#set($title = '快检手订单')
 <div class="bd">
     <div class="ui-tab">
         <div class="ui-navbar" id="order-navbar">
-            <div class="ui-navbar-item active" data-type="">全部</div>
+            <div class="ui-navbar-item active" data-type="0">待接单</div>
             <div class="ui-navbar-item" data-type="1">待付款</div>
-            <div class="ui-navbar-item" data-type="2">待确定</div>
+            <div class="ui-navbar-item" data-type="2">待完成</div>
             <div class="ui-navbar-item" data-type="3">已完成</div>
         </div>
 
@@ -15,13 +14,12 @@
             <div class="bd-box"></div>
             <div class="bd-box"></div>
 
+
         </div>
 
     </div>
 </div>
-
 #navbar()
-
 <script src="$staticServer.get('lib/zepto.min.js')"></script>
 <script src="$staticServer.get('js/physical.min.js')"></script>
 <script src="$staticServer.get('lib/dropload.min.js')"></script>
@@ -31,7 +29,7 @@
         var itemIndex = 0;
         //初始参数
         var param = [{
-            "type":"",
+            "type":"0",
             "page":1
         }];
         //初始化顶部选项卡
@@ -75,7 +73,7 @@
                 // };
                 $.ajax({
                     type: 'POST',
-                    url: '/order/list.htm',
+                    url: '/order/checkerlist.htm',
                     dataType: 'json',
                     data:param[itemIndex],
                     success: function(data){
@@ -88,6 +86,11 @@
                             me.noData();
                             // 标记第几个加载完成 (没有数据了才标记) end
                         }
+
+//                        if(data.total == 0) {
+//                            me.noData();
+//                            // 标记第几个加载完成 (没有数据了才标记) end
+//                        }
 
                         var result = getitem(data.data);
                         param[itemIndex].page++;
@@ -119,6 +122,7 @@
                 var classname = '';
                 if(v.state == 0) {
                     state = '待接单'
+                    classname = '';
                 } else if(v.state == 1) {
                     state = '待付款';
                     classname = 'minor';
@@ -133,27 +137,23 @@
                 }
 
                 //链接地址
-                var href = "/order/detail.htm?id=" + v.id;
+                var href = "/order/checkerdetail.htm?id=" + v.id;
                 html += '<a class="ui-suit '+classname+'" href="'+href+'">'+
                         '    <div class="ui-suit-hd">'+
-                        '        <div class="date primary">'+ v.date+'</div>'+
+                        '        <div class="date primary">'+v.date+'</div>'+
                         '        <div class="state">'+state+'</div>'+
                         '    </div>'+
                         '    <div class="ui-suit-bd">'+
                         '        <div class="img"><img src="'+v.img+'"></div>'+
                         '        <div class="primary">'+
-                        '            <div class="title">'+v.name+'</div>'+
+                        '            <div class="title">'+v.name+' <span>'+v.phone+'</span></div>'+
                         '            <div class="txt">'+v.ads+'</div>'+
                         '        </div>'+
                         '    </div>'+
-                        '    <div class="ui-suit-fd">'+
-                        '        <div class="dt primary">'+v.phone+'</div>'+
-                '    </div>'+
-                '</a>';
+                        '</a>';
+
             });
             return html;
         }
     });
 </script>
-</body>
-</html>

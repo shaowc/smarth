@@ -1,53 +1,22 @@
 #set($title= '注册快检手')
 <form class="ui-form" id="doctor-reg-form">
 
-    <div class="ui-cell ui-cell-select">
-        <div class="ui-cell-hd">
-            <label class="ui-label">省</label>
+    #if($memberLocation)
+        <div class="ui-cell">
+            <div class="ui-cell-hd">
+                <label class="ui-label">所在城市</label>
+            </div>
+            <div class="ui-cell-bd ui-cell-primary">
+                <input class="ui-input" type="text" name="city" value="$!memberLocation.province $!memberLocation.city $!memberLocation.county" readonly id="city" >
+            </div>
         </div>
-        <div class="ui-cell-bd ui-cell-primary">
-            <select name="" id="" class="ui-select">
-                <option value="">浙江省</option>
-                <option value="">上海市</option>
-            </select>
-        </div>
-    </div>
-    <div class="ui-cell ui-cell-select">
-        <div class="ui-cell-hd">
-            <label class="ui-label">市</label>
-        </div>
-        <div class="ui-cell-bd ui-cell-primary">
-            <select name="" id="" class="ui-select">
-                <option value="">杭州市</option>
-                <option value="">温州市</option>
-            </select>
-        </div>
-    </div>
-    <div class="ui-cell ui-cell-select">
-        <div class="ui-cell-hd">
-            <label class="ui-label">区</label>
-        </div>
-        <div class="ui-cell-bd ui-cell-primary">
-            <select name="" id="" class="ui-select">
-                <option value="">上城区</option>
-                <option value="">下城区</option>
-            </select>
-        </div>
-    </div>
-    <div class="ui-cell">
-        <div class="ui-cell-hd">
-            <label class="ui-label">地址</label>
-        </div>
-        <div class="ui-cell-bd ui-cell-primary">
-            <input class="ui-input" type="text" name="address" id="address" placeholder="请输入您的详细地址">
-        </div>
-    </div>
+    #end
     <div class="ui-cell">
         <div class="ui-cell-hd">
             <label class="ui-label">简介</label>
         </div>
         <div class="ui-cell-bd ui-cell-primary">
-            <input class="ui-input" type="text" name="description" placeholder="介绍下自己吧">
+            <input class="ui-input" type="text" id="description" name="description" placeholder="介绍下自己吧">
         </div>
     </div>
 
@@ -58,8 +27,8 @@
             </div>
             <div class="ui-cell-bd ">
                 <div class="ui-uploadimg-btn">
-                    <input class="ui-uploader-input" type="file" accept="image/*">
-                    <input type="hidden" name="n1">
+##                    <input class="ui-uploader-input" type="file" accept="image/*">
+                    <input type="hidden" name="wexinpic">
                 </div>
             </div>
         </div>
@@ -69,8 +38,8 @@
             </div>
             <div class="ui-cell-bd ">
                 <div class="ui-uploadimg-btn">
-                    <input class="ui-uploader-input" type="file" accept="image/*">
-                    <input type="hidden" name="n2">
+##                    <input class="ui-uploader-input" type="file" accept="image/*">
+                    <input type="hidden" name="wexinpic">
                 </div>
             </div>
         </div>
@@ -80,8 +49,8 @@
             </div>
             <div class="ui-cell-bd ">
                 <div class="ui-uploadimg-btn">
-                    <input class="ui-uploader-input" type="file" accept="image/*">
-                    <input type="hidden" name="n3">
+##                    <input class="ui-uploader-input" type="file" accept="image/*">
+                    <input type="hidden" name="wexinpic">
                 </div>
             </div>
         </div>
@@ -90,7 +59,10 @@
                 <p>上传医师（护士）资格</p>
             </div>
             <div class="ui-cell-bd ">
-                <div class="ui-uploadimg-btn img" style="background-image:url(http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/);"><input class="ui-uploader-input" type="file" accept="image/*"></div>
+                <div class="ui-uploadimg-btn" >
+##                    <input class="ui-uploader-input" type="file" accept="image/*">
+                    <input type="hidden" name="wexinpic">
+                </div>
             </div>
         </div>
     </div>
@@ -98,21 +70,19 @@
     <div class="ui-form-btns">
         <a href="javascript:" class="ui-btn ui-btn-primary" id="submt-btn">确认</a>
     </div>
-    <input type="hidden" name="hidephone" id="hidephone">
-    <input type="hidden" name="hidecodekey" id="hidecodekey">
 </form>
 <script src="$staticServer.get('lib/zepto.min.js')"></script>
-<script src="$staticServer.get('js/physical.js')"></script>
+<script src="$staticServer.get('js/physical.min.js')"></script>
 <!-- 图片压缩插件 啊啊啊安卓微信里面不能用-->
 <!-- <script src="lib/localResizeIMG/lrz.all.bundle.js"></script> -->
 <script>
     $(function(){
 
         //对所有file绑定事件
-        $('input[type="file"]').on('change',function(){
+        $('.ui-uploadimg-btn').on('click',function(){
             var that = this;
             var self = $(that);
-            var parent = self.parent();
+            var child = self.find("input");
 
 
             // !!!!!!! 经过测试。微信选择图片只能用jssdk。不用就无限刷新。赶集网也是用相同的方法。无法在微信中使用。
@@ -147,14 +117,25 @@
             // });
 
             //微信的上传图片
-            // wx.chooseImage({
-            //     count: 1, // 默认9
-            //     sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-            //     sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-            //     success: function (res) {
-            //         var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-            //     }
-            // });
+            wx.chooseImage({
+                 count: 1, // 默认9
+                 sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                 sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                 success: function (res) {
+                     var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                     wx.uploadImage({
+                         localId: localIds.toString(), // 需要上传的图片的本地ID，由chooseImage接口获得
+                         isShowProgressTips: 1, // 默认为1，显示进度提示
+                         success: function (res) {
+                             self.addClass("img");
+                             self.attr("style", 'background-image:url('+ localIds.toString()+');')
+                             var serverId = res.serverId; // 返回图片的服务器端ID
+                             console.log(serverId);
+                             child.val(serverId);
+                         }
+                     });
+                 }
+            });
 
         });
 
@@ -162,24 +143,37 @@
          * 校验
          */
         function checkform(){
-//            var address = $('#address').val();
-//            if(!address){
-//                $.Tip({'id':'er','content':'请填写详细地址'})
-//                return false;
-//            }
-            return true;
+            var description = $('#description').val();
+            if(!description){
+                $.Tip({'id':'er','content':'请填写简介'})
+                return false;
+            }
+
+            var check = true;
+            $(".ui-uploadimg-btn input").each(function () {
+                var that = $(this);
+                if(!that.val()) {
+                    check = false;
+                    $.Tip({'id':'er','content':'请'+that.parent().parent().prev().find("p").html()})
+                    return false;
+                }
+            });
+
+            return check;
         }
 
         //提交按钮
         $('#submt-btn').on('click',function(){
 
-            if(check()){
+            if(checkform()){
                 var param = $('#doctor-reg-form').serialize();
                 // var param = $('#doctor-reg-form').serializeArry();
                 //提交
                 $.pajax('id1','/checker/reg.htm','POST',param,function(data){
                     //ajax返回的data
                     console.log(data);
+                    $.Tip({'id':'er','content':'注册成功'})
+                    window.location.href = '/packet/list.htm';
                 });
             }
         });

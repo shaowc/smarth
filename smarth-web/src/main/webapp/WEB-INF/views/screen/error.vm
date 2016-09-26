@@ -32,7 +32,6 @@
 </head>
 <body>
 <div class="error-404">
-    <img src="http://img.taocaiku.com/201507311718573234" class="img1">
     <div class="error-title">
         <div class="tit1">哎呀，出错了！</div>
         <div class="errorcode" #if(!$showStack) style="display: none" #end >
@@ -44,7 +43,6 @@
         </div>
     </div>
 </div>
-<img src="http://img.taocaiku.com/201507311719273235" class="error-img">
 <!--错误日志-->
 <div style="display:none;"></div>
 <script>

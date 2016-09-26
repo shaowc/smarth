@@ -6,7 +6,7 @@
        <bean id="wechatApi" class="com.lotus.wechat.WechatApi">
               <property name="appKey" value="${weixin.appId}" />
               <property name="appSecret" value="${weixin.appSecret}" />
-              <property name="state" value="haggle" />
+              <property name="state" value="smarth" />
        </bean>
 
        <bean id="wechatPayApi" class="com.lotus.wechat.pay.WechatPayApiImpl">
@@ -19,6 +19,8 @@
        </bean>
 
        <bean id="orderPay" class="com.familyan.smarth.pay.WechatOrderPay" />
+
+       <bean id="wechatImgTransfer" class="com.familyan.smarth.utils.WechatImgTransfer" />
 
        <bean id="wechatEngine" class="com.lotus.wechat.message.WechatEngine">
               <property name="functions">

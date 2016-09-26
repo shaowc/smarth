@@ -15,11 +15,12 @@
             <div class="dt primary">
                 <span class="price">￥#currency($item.price, '#.##')</span>
             </div>
-            <div class="dd"><a href="doctor-schedule.html" class="ui-btn ui-btn-mini ui-btn-default">服务日程</a></div>
+            <div class="dd"><a href="/packet/schedule.htm?packetId=$item.id" class="ui-btn ui-btn-mini ui-btn-default">服务日程</a></div>
         </div>
     </div>
     #end
 
 </div>
+#navbar()
 <script src="$staticServer.get('lib/zepto.min.js')"></script>
-<script src="$staticServer.get('js/physical.js')"></script>
+<script src="$staticServer.get('js/physical.min.js')"></script>

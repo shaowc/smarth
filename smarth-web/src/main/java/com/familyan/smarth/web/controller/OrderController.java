@@ -7,11 +7,17 @@ import com.familyan.smarth.manager.OrderManager;
 import com.familyan.smarth.manager.PacketManager;
 import com.familyan.smarth.service.MemberService;
 import com.familyan.smarth.utils.LocationUtils;
+import com.familyan.smarth.web.domain.OrderVO;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.lotus.core.web.security.Security;
+import com.lotus.service.result.Page;
 import com.lotus.service.result.PageResult;
 import com.lotus.service.result.Result;
 import com.lotus.wechat.WechatOpenId;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -23,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -49,22 +56,101 @@ public class OrderController {
         binder.registerCustomEditor(Date.class,new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"),true));
     }
 
-    /**
-     * 我的订单, 普通用户
-     * @param loginMember
-     * @param openId
-     * @param modelMap
-     * @return
-     */
-    @RequestMapping("list")
-    public String list(LoginMember loginMember, WechatOpenId openId, Integer type, ModelMap modelMap) {
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setMemberId(loginMember.getId());
-        PageResult<List<Order>> pageResult = orderManager.findByPage(orderDTO, 1, Integer.MAX_VALUE, "gmt_create DESC");
-        modelMap.put("pageResult", pageResult);
+    @RequestMapping(value = "list", method = RequestMethod.GET)
+    @Security
+    public String list(LoginMember loginMember, ModelMap modelMap) {
         return "order/list";
     }
 
+    @RequestMapping(value = "checkerlist", method = RequestMethod.GET)
+    @Security
+    public String checkers(LoginMember loginMember, ModelMap modelMap) {
+        // 普通用户不允许访问
+        if (!loginMember.containsFeature(1l)) {
+            return "redirect: /order/list.htm";
+        }
+
+        return "order/checkerlist";
+    }
+
+    /**
+     * 我的订单, 普通用户
+     * @param loginMember
+     * @return
+     */
+    @RequestMapping(value = "list", method = RequestMethod.POST)
+    @ResponseBody
+    public PageResult list(LoginMember loginMember, Integer type, Page page) {
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setMemberId(loginMember.getId());
+        orderDTO.setStatus(type);
+        PageResult<List<Order>> pageResult = orderManager.findByPage(orderDTO, page.getStart(), page.getPageSize(), "gmt_create DESC");
+        List<Long> memberIds = Lists.transform(pageResult.getData(), new Function<Order, Long>() {
+            @Override
+            public Long apply(Order input) {
+                return input.getCheckerId();
+            }
+        });
+        List<Checker> checkers = checkerManager.findByMemberIds(memberIds);
+        Map<Long, Checker> checkerMap = Maps.uniqueIndex(checkers, new Function<Checker, Long>() {
+            @Override
+            public Long apply(Checker input) {
+                return input.getMemberId();
+            }
+        });
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Map<Long, MemberDTO> memberMap = memberService.findByIds(memberIds);
+        List<OrderVO> data = new ArrayList<>();
+        for(Order order : pageResult.getData()) {
+            OrderVO orderVO = new OrderVO();
+            orderVO.setId(order.getId());
+            orderVO.setDate(dateFormat.format(order.getCheckupTime()));
+            orderVO.setState(order.getStatus());
+            orderVO.setName(memberMap.get(order.getCheckerId()).getRealName());
+            orderVO.setPhone(memberMap.get(order.getCheckerId()).getMobile());
+            orderVO.setImg(memberMap.get(order.getCheckerId()).getAvatar());
+            orderVO.setAds(checkerMap.get(order.getCheckerId()).getDescription());
+            data.add(orderVO);
+        }
+
+        return new PageResult<>(pageResult.getStart(), pageResult.getLimit(), pageResult.getTotal(), data);
+    }
+
+    /**
+     * 我的订单, 普通用户
+     * @param loginMember
+     * @return
+     */
+    @RequestMapping(value = "checkerlist", method = RequestMethod.POST)
+    @ResponseBody
+    public PageResult checkers(LoginMember loginMember, Integer type, Page page) {
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setCheckerId(loginMember.getId());
+        orderDTO.setStatus(type);
+        PageResult<List<Order>> pageResult = orderManager.findByPage(orderDTO, page.getStart(), page.getPageSize(), "gmt_create DESC");
+        List<Long> memberIds = Lists.transform(pageResult.getData(), new Function<Order, Long>() {
+            @Override
+            public Long apply(Order input) {
+                return input.getMemberId();
+            }
+        });
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Map<Long, MemberDTO> memberMap = memberService.findByIds(memberIds);
+        List<OrderVO> data = new ArrayList<>();
+        for(Order order : pageResult.getData()) {
+            OrderVO orderVO = new OrderVO();
+            orderVO.setId(order.getId());
+            orderVO.setState(order.getStatus());
+            orderVO.setDate(dateFormat.format(order.getCheckupTime()));
+            orderVO.setName(memberMap.get(order.getMemberId()).getRealName());
+            orderVO.setPhone(memberMap.get(order.getMemberId()).getMobile());
+            orderVO.setImg(memberMap.get(order.getMemberId()).getAvatar());
+            orderVO.setAds(order.getCity() + order.getAddress());
+            data.add(orderVO);
+        }
+
+        return new PageResult<>(pageResult.getStart(), pageResult.getLimit(), pageResult.getTotal(), data);
+    }
 
     /**
      * 预约下单
@@ -77,6 +163,7 @@ public class OrderController {
         modelMap.put("memberLocation", memberLocation);
         List<Checker> checkers = checkerManager.findByPacketId(packetId);
         modelMap.put("checkers", checkers);
+        modelMap.put("items", packet.getContent().split(","));
 
         List<Long> memberIds = Lists.transform(checkers, new Function<Checker, Long>() {
             @Override
@@ -134,6 +221,8 @@ public class OrderController {
     public String placeChecker(LoginMember loginMember, Long checkerId, ModelMap modelMap) {
         Checker checker = checkerManager.findByMemberId(checkerId);
         modelMap.put("checker", checker);
+        MemberLocation memberLocation = memberLocationManager.findByMemberId(loginMember.getId());
+        modelMap.put("memberLocation", memberLocation);
         List<Packet> packets = packetManager.findByMemberId(checkerId);
         modelMap.put("packets", packets);
         return "order/place-order-2";
@@ -166,7 +255,7 @@ public class OrderController {
         order.setStatus(0);
         order.setPackageContent(packet.getContent());
         orderManager.add(order);
-        return Result.success(1);
+        return Result.success(order.getId());
     }
 
     /**
@@ -181,21 +270,51 @@ public class OrderController {
     public String detail(LoginMember loginMember, WechatOpenId openId, Integer id, ModelMap modelMap) {
         Order order = orderManager.findById(id);
 
-        if(loginMember.containsFeature(1) && !order.getCheckerId().equals(loginMember.getId())) {
-            // 快检手
-            modelMap.put("msg", "不是您的订单，无权限访问");
-            return "error";
-        } else if(!loginMember.containsFeature(1) && !order.getMemberId().equals(loginMember.getId())) {
+        if(!order.getMemberId().equals(loginMember.getId())) {
             // 普通用户
             modelMap.put("msg", "不是您的订单，无权限访问");
             return "error";
         }
         Checker checker = checkerManager.findByMemberId(order.getCheckerId());
         Packet packet = packetManager.findById(order.getPacketId());
+        modelMap.put("items", order.getPackageContent().split(","));
+        if (order.getStatus() == 3) {
+            modelMap.put("results", order.getCheckupResult().split(","));
+        }
         modelMap.put("packet", packet);
         modelMap.put("checker", checker);
         modelMap.put("order", order);
         return "order/detail";
+    }
+
+    /**
+     * 订单详情
+     * @param loginMember
+     * @param openId
+     * @param id
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping("checkerdetail")
+    public String checkerdetail(LoginMember loginMember, WechatOpenId openId, Integer id, ModelMap modelMap) {
+        Order order = orderManager.findById(id);
+
+        if(!order.getCheckerId().equals(loginMember.getId())) {
+            // 快检手
+            modelMap.put("msg", "不是您的订单，无权限访问");
+            return "error";
+        }
+
+        Checker checker = checkerManager.findByMemberId(order.getCheckerId());
+        Packet packet = packetManager.findById(order.getPacketId());
+        modelMap.put("items", order.getPackageContent().split(","));
+        if (order.getStatus() == 3) {
+            modelMap.put("results", order.getCheckupResult().split(","));
+        }
+        modelMap.put("packet", packet);
+        modelMap.put("checker", checker);
+        modelMap.put("order", order);
+        return "order/checkerdetail";
     }
 
     /**
@@ -227,25 +346,22 @@ public class OrderController {
     }
 
     /**
-     * 拒绝接单, 取消订单
+     * 普通用户取消订单
      * @param loginMember
      * @param openId
      * @param id
      * @return
      */
     @RequestMapping("cancel")
+    @ResponseBody
     public Result cancel(LoginMember loginMember, WechatOpenId openId, Integer id) {
-
 
         Order order = orderManager.findById(id);
         if(order == null) {
             return Result.error("订单不存在");
         }
 
-        if (loginMember.containsFeature(1) && !order.getCheckerId().equals(loginMember.getId())) {
-            // 快检手,拒绝接单
-            return Result.error("不是您的订单，您无权限处理");
-        } else if (!order.getMemberId().equals(loginMember.getId())){
+        if (!order.getMemberId().equals(loginMember.getId())){
             // 下单人，取消订单
             return Result.error("不是您的订单，您不能取消");
         }
@@ -258,6 +374,39 @@ public class OrderController {
         orderManager.modify(order);
         return Result.success(order.getId());
     }
+
+
+    /**
+     * 快检手拒绝接单
+     * @param loginMember
+     * @param openId
+     * @param id
+     * @return
+     */
+    @RequestMapping("checkercancel")
+    @ResponseBody
+    public Result checkercancel(LoginMember loginMember, WechatOpenId openId, Integer id) {
+
+        Order order = orderManager.findById(id);
+        if(order == null) {
+            return Result.error("订单不存在");
+        }
+
+        if (!loginMember.containsFeature(1l) || !order.getCheckerId().equals(loginMember.getId())) {
+            // 快检手,拒绝接单
+            return Result.error("不是您的订单，您无权限处理");
+        }
+
+        if(order.getStatus() != 0) {
+            return Result.error("该订单已处理过");
+        }
+
+        order.setStatus(4);
+        orderManager.modify(order);
+        return Result.success(order.getId());
+    }
+
+
 
     /**
      * 填写体检报告，限体检手访问

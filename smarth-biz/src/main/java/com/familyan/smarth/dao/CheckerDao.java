@@ -21,8 +21,8 @@ public interface CheckerDao {
             "</script>")
     List<Checker> findByIds(List<Integer> ids);
 
-    @Insert("INSERT INTO CK_CHECKER (id, member_id, name, mobile, gender, birthday, identify_pic, identify_pic2, qualification_pic, description, longitude, latitude, gmt_create, gmt_modify ) " +
-            "VALUES (#{id}, #{memberId}, #{name}, #{mobile}, #{gender}, #{birthday}, #{identifyPic}, #{identifyPic2}, #{qualificationPic}, #{description}, #{longitude}, #{latitude}, now(), #{gmtModify} )")
+    @Insert("INSERT INTO CK_CHECKER (id, member_id, name, mobile, gender, birthday, identify_pic, identify_pic1, identify_pic2, qualification_pic, description, longitude, latitude, gmt_create, gmt_modify ) " +
+            "VALUES (#{id}, #{memberId}, #{name}, #{mobile}, #{gender}, #{birthday}, #{identifyPic}, #{identifyPic1}, #{identifyPic2}, #{qualificationPic}, #{description}, #{longitude}, #{latitude}, now(), #{gmtModify} )")
     int insert(Checker checker);
 
     int update(Checker checker);

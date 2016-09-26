@@ -33,7 +33,7 @@
 </form>
 
 <script src="$staticServer.get('lib/zepto.min.js')"></script>
-<script src="$staticServer.get('js/physical.js')"></script>
+<script src="$staticServer.get('js/physical.min.js')"></script>
 <script>
     $(function(){
         //校验表单

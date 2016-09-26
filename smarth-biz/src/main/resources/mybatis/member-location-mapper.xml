@@ -3,11 +3,10 @@
 <mapper namespace="com.familyan.smarth.dao.MemberLocationDao">
 
     <update id="update" parameterType="memberLocation" >
-        UPDATE CK_ORDER
+        UPDATE MEMBER_LOCATION
         <set>
             <if test="longitude != null"> longitude = #{longitude},</if>
             <if test="latitude != null"> latitude = #{latitude},</if>
-            <if test="prepayId != null"> prepay_id = #{prepayId},</if>
         </set>
         WHERE id =#{id}
     </update>

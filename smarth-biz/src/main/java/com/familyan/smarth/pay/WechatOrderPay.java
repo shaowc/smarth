@@ -73,6 +73,7 @@ public class WechatOrderPay implements OrderPay {
             }
             req.setOpenid(memberWechat.getOpenId());
             UnifiedorderResp resp = wechatPayApi.unifiedorder(req);
+            logger.debug(resp);
             if ("SUCCESS".equals(resp.getReturnCode()) && "SUCCESS".equals(resp.getResultCode()) && StringUtils.isNotBlank(resp.getPrepayId())) {
                 Order updateVo = new Order();
                 updateVo.setId(orderId);

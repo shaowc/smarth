@@ -10,3 +10,30 @@
 ## #currency(101 ,'#.##') -> 1.01
 ## 注意格式参数用 单引号
 #macro( currency $value,$format)#if($value)#set($r = $value / 100.00)#if($format)$numberTool.format($format,$r)#else $numberTool.currency($r) #end#else 0#end#end
+
+
+#macro(navbar)
+<!-- 底部浮动菜单 -->
+<div class="ui-bottom-bar">
+    <div class="it">
+        <a href="/packet/list.htm">商城</a>
+    </div>
+    #if(!$_loginMember.constainsFeature(1))
+    <div class="it">
+        <a href="/checker/reg.htm">注册快检手</a>
+    </div>
+    #end
+    <div class="it more">
+        <a href="javascript:">我的</a>
+        <ul class="ui-bottom-sub">
+            <li><a href="/order/list.htm">我的订单</a></li>
+            <li><a href="/checker/list.htm">我的体检手</a></li>
+            #if($_loginMember.constainsFeature(1))
+            <li><a href="/order/checkerlist.htm">快检手订单</a></li>
+            <li><a href="/packet/mylist.htm">我的体检包</a></li>
+            #end
+        </ul>
+    </div>
+</div>
+<!-- 底部浮动菜单 -->
+#end

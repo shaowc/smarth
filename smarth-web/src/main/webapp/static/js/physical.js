@@ -312,3 +312,21 @@ $.comform = function(title,msg,ok,cancel){
         });
 	}
 }
+
+/**
+ * 初始化底部菜单
+ */
+
+$(function(){
+	var fbar = $('.ui-bottom-bar');
+	if(fbar.length == 1){
+		fbar.find('.more > a').on('click',function(){
+			var btnparent = $(this).parents('.more');
+			if(btnparent.hasClass('show')){
+				btnparent.removeClass('show');
+			}else{
+				btnparent.addClass('show');
+			}
+		});
+	}
+});

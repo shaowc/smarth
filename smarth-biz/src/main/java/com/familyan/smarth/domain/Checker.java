@@ -45,19 +45,25 @@ public class Checker {
      * 身份证照片
      *
      */
-    private String identifyPic;
+    private Integer identifyPic;
+
+    /**
+     * 身份证照片
+     *
+     */
+    private Integer identifyPic1;
 
     /**
      * 身份证反面
      *
      */
-    private String identifyPic2;
+    private Integer identifyPic2;
 
     /**
      * 资格证照片
      *
      */
-    private String qualificationPic;
+    private Integer qualificationPic;
 
     /**
      * 介绍
@@ -139,27 +145,35 @@ public class Checker {
         this.birthday = birthday;
     }
 
-    public String getIdentifyPic() {
+    public Integer getIdentifyPic() {
         return identifyPic;
     }
 
-    public void setIdentifyPic(String identifyPic) {
+    public void setIdentifyPic(Integer identifyPic) {
         this.identifyPic = identifyPic;
     }
 
-    public String getIdentifyPic2() {
+    public Integer getIdentifyPic1() {
+        return identifyPic1;
+    }
+
+    public void setIdentifyPic1(Integer identifyPic1) {
+        this.identifyPic1 = identifyPic1;
+    }
+
+    public Integer getIdentifyPic2() {
         return identifyPic2;
     }
 
-    public void setIdentifyPic2(String identifyPic2) {
+    public void setIdentifyPic2(Integer identifyPic2) {
         this.identifyPic2 = identifyPic2;
     }
 
-    public String getQualificationPic() {
+    public Integer getQualificationPic() {
         return qualificationPic;
     }
 
-    public void setQualificationPic(String qualificationPic) {
+    public void setQualificationPic(Integer qualificationPic) {
         this.qualificationPic = qualificationPic;
     }
 

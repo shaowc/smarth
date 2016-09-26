@@ -9,6 +9,7 @@ import com.familyan.smarth.manager.MemberLocationManager;
 import com.familyan.smarth.manager.service.SmsService;
 import com.familyan.smarth.service.MemberService;
 import com.familyan.smarth.utils.LocationUtils;
+import com.familyan.smarth.utils.WechatImgTransfer;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.lotus.core.web.security.Security;
@@ -40,36 +41,49 @@ public class CheckerController {
     private MemberService memberService;
     @Autowired
     private MemberLocationManager memberLocationManager;
+    @Autowired
+    private WechatImgTransfer wechatImgTransfer;
 
-    @RequestMapping("reg")
+    @RequestMapping(value = "reg", method = RequestMethod.GET)
     @Security
     public String reg(LoginMember loginMember, ModelMap modelMap) {
+        Checker checker = checkerManager.findByMemberId(loginMember.getId());
+        if(checker != null) {
+            return "redirect:/packet/mylist.htm";
+        }
+        MemberLocation memberLocation = memberLocationManager.findByMemberId(loginMember.getId());
+        modelMap.put("memberLocation", memberLocation);
         return "checker/reg";
     }
 
     /**
      * 注册体检手，绑定手机号，完善个人信息
+     * 完善个人信息时，已经绑定手机号
      *
      * @param loginMember
      * @param openId
      * @param checker
-     * @param code
-     * @param verifyCode
      * @return
      */
     @RequestMapping(value = "reg", method = RequestMethod.POST)
+    @ResponseBody
     @Security
-    public Result doreg(LoginMember loginMember, WechatOpenId openId, Checker checker, String code, String verifyCode) {
-        // 检查验证码
-        if(StringUtils.isBlank(code) || StringUtils.isBlank(verifyCode)
-                || !smsService.validateSmsVerifyCode(code,verifyCode, checker.getMobile())) {
-            return Result.error("请填写正确的验证码");
-        }
+    public Result doreg(LoginMember loginMember, WechatOpenId openId, Checker checker, String wexinpic) {
+        Checker exist = checkerManager.findByMemberId(loginMember.getId());
         MemberDTO memberDTO = memberService.findById(loginMember.getId());
+        if (exist != null) {
+            checker.setId(exist.getId());
+        }
         checker.setMemberId(loginMember.getId());
-        //checker.setBirthday(memberDTO.getBirthday());
         checker.setGender(memberDTO.getGender());
         checker.setName(memberDTO.getRealName());
+        checker.setMobile(memberDTO.getMobile());
+        List<String> newImgs = Arrays.asList(wexinpic.split(","));
+//        List<Integer> pics = wechatImgTransfer.transfer(newImgs);
+        checker.setIdentifyPic(wechatImgTransfer.transfer(newImgs.get(0)));
+        checker.setIdentifyPic1(wechatImgTransfer.transfer(newImgs.get(0)));
+        checker.setIdentifyPic2(wechatImgTransfer.transfer(newImgs.get(0)));
+        checker.setQualificationPic(wechatImgTransfer.transfer(newImgs.get(0)));
 
         checkerManager.save(checker);
         memberService.addFeature(checker.getMemberId(), 1l);
@@ -90,13 +104,16 @@ public class CheckerController {
         List<Checker> checkers = checkerManager.findMemberChecker(loginMember.getId());
         MemberLocation memberLocation = memberLocationManager.findByMemberId(loginMember.getId());
         modelMap.put("checkers", checkers);
+        List<Long> memberIds = Lists.transform(checkers, new Function<Checker, Long>() {
+            @Override
+            public Long apply(Checker input) {
+                return input.getMemberId();
+            }
+        });
+
+        Map<Long, MemberDTO> memberMap = memberService.findByIds(memberIds);
+        modelMap.put("memberMap", memberMap);
         if(!checkers.isEmpty()) {
-            List<Long> memberIds = Lists.transform(checkers, new Function<Checker, Long>() {
-                @Override
-                public Long apply(Checker input) {
-                    return input.getMemberId();
-                }
-            });
             final Map<Long, Double> distanceMap = new HashMap<>();
             Map<Long, String> distanceUnitMap = new HashMap<>();
             List<MemberLocation> checkerLocations = memberLocationManager.findByMemberIds(memberIds);

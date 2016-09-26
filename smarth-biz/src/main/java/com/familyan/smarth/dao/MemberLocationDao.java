@@ -28,7 +28,7 @@ public interface MemberLocationDao {
 
     int update(MemberLocation memberLocation);
 
-    @Update("UPDATE SET type=#{type} WHERE member_id=#{memberId}")
+    @Update("UPDATE MEMBER_LOCATION SET type=#{type} WHERE member_id=#{memberId}")
     int updateType(@Param("memberId")Long memberId, @Param("type")Integer type);
 
 

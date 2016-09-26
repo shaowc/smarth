@@ -1,0 +1,24 @@
+<div class="bd">
+    #foreach($order in $orders)
+    <div class="ui-suit">
+        <div class="ui-suit-hd">
+            <div class="date primary">$order.date</div>
+            <div class="state">#if($order.state==0)待接单#elseif($order.status==1)已接单，待付款#elseif($order.status==2)预约成功#elseif($order.status==3)服务完成#elseif($order.status==4)已取消#end</div>
+        </div>
+        <div class="ui-suit-bd">
+            <div class="img"><img src="$order.img"></div>
+            <div class="primary">
+                <div class="title">$order.name <a href="tel:$order.phone" class="ui-link">$order.phone</a></div>
+                <div class="txt">$order.ads</div>
+            </div>
+        </div>
+        <div class="ui-suit-fd">
+            <div class="primary"></div>
+            <div class="dd"><a href="/order/checkerdetail.htm?id=$order.id" class="ui-btn ui-btn-mini ui-btn-default">查看详情</a></div>
+        </div>
+    </div>
+    #end
+</div>
+
+<script src="$staticServer.get('lib/zepto.min.js')"></script>
+<script src="$staticServer.get('js/physical.min.js')"></script>
