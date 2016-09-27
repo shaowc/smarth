@@ -169,6 +169,7 @@
               <mvc:interceptor>
                      <mvc:mapping path="/**"/>
                      <mvc:exclude-mapping path="/packet/list.htm" />
+                     <mvc:exclude-mapping path="/sms/send.htm" />
                      <mvc:exclude-mapping path="/bind-phone.htm" />
                      <mvc:exclude-mapping path="/perfect-info.htm" />
                      <mvc:exclude-mapping path="/wechat/*" />
@@ -182,6 +183,7 @@
 
               <mvc:interceptor>
                      <mvc:mapping path="/**"/>
+                     <mvc:exclude-mapping path="/sms/send.htm" />
                      <mvc:exclude-mapping path="/packet/list.htm" />
                      <mvc:exclude-mapping path="/bind-phone.htm" />
                      <mvc:exclude-mapping path="/perfect-info.htm" />
