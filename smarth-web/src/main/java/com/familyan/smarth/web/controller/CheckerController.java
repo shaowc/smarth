@@ -12,6 +12,8 @@ import com.familyan.smarth.utils.LocationUtils;
 import com.familyan.smarth.utils.WechatImgTransfer;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.lotus.core.web.cookyjar.Cookyjar;
 import com.lotus.core.web.security.Security;
 import com.lotus.service.result.Result;
 import com.lotus.wechat.WechatOpenId;
@@ -68,7 +70,7 @@ public class CheckerController {
     @RequestMapping(value = "reg", method = RequestMethod.POST)
     @ResponseBody
     @Security
-    public Result doreg(LoginMember loginMember, WechatOpenId openId, Checker checker, String wexinpic) {
+    public Result doreg(LoginMember loginMember, WechatOpenId openId, Cookyjar cookyjar, Checker checker, String wexinpic) {
         Checker exist = checkerManager.findByMemberId(loginMember.getId());
         MemberDTO memberDTO = memberService.findById(loginMember.getId());
         if (exist != null) {
@@ -87,6 +89,12 @@ public class CheckerController {
 
         checkerManager.save(checker);
         memberService.addFeature(checker.getMemberId(), 1l);
+        if(loginMember.getFeatures() != null) {
+            loginMember.getFeatures().add(1l);
+        } else {
+            loginMember.setFeatures(Sets.newHashSet(1l));
+        }
+        cookyjar.set(loginMember);
         return Result.success(1);
     }
 

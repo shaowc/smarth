@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+       <!-- 线程池，用来异步操作 -->
+       <task:executor id="eventExecutor" pool-size="3" queue-capacity="1000" rejection-policy="CALLER_RUNS" />
+
+       <!-- 消息总线 -->
+       <bean id="eventBus" class="com.familyan.smarth.eventbus.EventBusFactory" >
+              <property name="async" value="true" />
+              <property name="executor" ref="eventExecutor" />
+       </bean>
+
+       <!-- 等待bean 都初始化完成之后再来注册Listener ,避免循环引用 -->
+       <bean id="eventBusPostProcessor" class="com.familyan.smarth.eventbus.EventBusPostProcessor" />
+
+       <!-- 监听事件 -->
+
+</beans>

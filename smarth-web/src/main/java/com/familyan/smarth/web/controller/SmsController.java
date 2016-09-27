@@ -1,5 +1,6 @@
 package com.familyan.smarth.web.controller;
 
+import com.familyan.smarth.manager.VerifyCodeManager;
 import com.familyan.smarth.manager.service.SmsService;
 import com.familyan.smarth.utils.UserNameUtil;
 import com.google.common.cache.Cache;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +32,7 @@ public class SmsController {
     Cache<String,String> cache = CacheBuilder.newBuilder().maximumSize(10000).expireAfterWrite(1, TimeUnit.MINUTES).build();
 
     @Autowired
-    SmsService smsService;
+    VerifyCodeManager verifyCodeManager;
 
     @Value("${top.domain}")
     String topDomain;
@@ -38,23 +40,23 @@ public class SmsController {
     @Value("${app.domain}")
     String appDomain;
 
-    @RequestMapping("send")
+    @RequestMapping(value = "send", method = RequestMethod.POST)
     @ResponseBody
     public Result<String> send(final String mobile){
 
         boolean isMobile = StringUtils.isNotBlank(mobile) &&  UserNameUtil.isMobile(mobile);
         if(isMobile){
-            return Result.success("123456");
-//            try {
-//                return Result.success(cache.get(mobile, new Callable<String>() {
-//                    @Override
-//                    public String call() throws Exception {
-//                        return smsService.sendSmsVerifyCode(mobile);
-//                    }
-//                }));
-//            } catch (ExecutionException e) {
-//                return Result.error("服务异常，稍后重试");
-//            }
+//            return Result.success("123456");
+            try {
+                return Result.success(cache.get(mobile, new Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        return verifyCodeManager.send(mobile);
+                    }
+                }));
+            } catch (ExecutionException e) {
+                return Result.error("服务异常，稍后重试");
+            }
         }else{
            return  Result.error("输入正确的手机号");
         }

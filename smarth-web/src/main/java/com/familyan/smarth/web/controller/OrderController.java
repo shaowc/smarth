@@ -1,6 +1,7 @@
 package com.familyan.smarth.web.controller;
 
 import com.familyan.smarth.domain.*;
+import com.familyan.smarth.eventbus.OrderEventListener;
 import com.familyan.smarth.manager.CheckerManager;
 import com.familyan.smarth.manager.MemberLocationManager;
 import com.familyan.smarth.manager.OrderManager;
@@ -11,6 +12,7 @@ import com.familyan.smarth.web.domain.OrderVO;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.eventbus.EventBus;
 import com.lotus.core.web.security.Security;
 import com.lotus.service.result.Page;
 import com.lotus.service.result.PageResult;
@@ -50,6 +52,8 @@ public class OrderController {
     private CheckerManager checkerManager;
     @Autowired
     private MemberLocationManager memberLocationManager;
+    @Autowired
+    private EventBus eventBus;
 
     @InitBinder
     public  void initBinder(WebDataBinder binder){
@@ -255,6 +259,7 @@ public class OrderController {
         order.setStatus(0);
         order.setPackageContent(packet.getContent());
         orderManager.add(order);
+        eventBus.post(new OrderEventListener.OrderEvent(order, 0));
         return Result.success(order.getId());
     }
 
@@ -342,6 +347,7 @@ public class OrderController {
 
         order.setStatus(1);
         orderManager.modify(order);
+        eventBus.post(new OrderEventListener.OrderEvent(order, 1));
         return Result.success(1);
     }
 
@@ -372,6 +378,7 @@ public class OrderController {
 
         order.setStatus(4);
         orderManager.modify(order);
+        //eventBus.post(new OrderEventListener.OrderEvent(order, OrderEventListener.OrderEvent.CANCELD));
         return Result.success(order.getId());
     }
 
@@ -403,6 +410,7 @@ public class OrderController {
 
         order.setStatus(4);
         orderManager.modify(order);
+        eventBus.post(new OrderEventListener.OrderEvent(order, OrderEventListener.OrderEvent.REFUSED));
         return Result.success(order.getId());
     }
 

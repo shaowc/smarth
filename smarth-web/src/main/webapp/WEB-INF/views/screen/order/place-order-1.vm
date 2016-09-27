@@ -1,4 +1,35 @@
 #set($title = '预约下单')
+<div class="bd">
+    <div class="ui-ensemble">
+        <div class="ui-ensemble-bd">
+            <div class="dt">
+                <div class="ui-ensemble-img"><img src="$staticServer.get('images/package-img.jpg')"></div>
+            </div>
+            <div class="dd primary">
+                <div class="title">$!packet.name</div>
+                <p class="txt">$!packet.description</p>
+            </div>
+        </div>
+        <div class="ui-ensemble-fd">
+            <div class="dt primary">
+                <span class="price">￥#currency($packet.price, '#.##')</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 体检包内容-->
+    <div class="ui-read-title">体检内容</div>
+
+    <div class="ui-read-group">
+        #foreach($item in $items)
+            <div class="ui-read-input">
+                <div class="label">$item</div>
+                <div class="txt primary"></div>
+            </div>
+        #end
+    </div>
+
+</div>
 <form class="ui-form" id="place-order-form">
 
     <div class="ui-cell">
@@ -35,17 +66,6 @@
             <input class="ui-input" type="text" name="checkerName" id="doctor" readonly="true" placeholder="请选择">
         </div>
         <div class="ui-cell-ft"></div>
-    </div>
-    <!-- 体检包内容-->
-    <div class="ui-read-title">体检包内容</div>
-
-    <div class="ui-read-group">
-    #foreach($item in $items)
-        <div class="ui-read-input">
-            <div class="label">$item</div>
-            <div class="txt primary"></div>
-        </div>
-    #end
     </div>
 
     <div class="ui-form-btns">

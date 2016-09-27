@@ -7,6 +7,7 @@ import com.familyan.smarth.domain.LoginMember;
 import com.familyan.smarth.domain.MemberDTO;
 import com.familyan.smarth.domain.MemberLocation;
 import com.familyan.smarth.manager.MemberLocationManager;
+import com.familyan.smarth.manager.VerifyCodeManager;
 import com.familyan.smarth.manager.service.SmsService;
 import com.familyan.smarth.service.MemberService;
 import com.lotus.service.result.Result;
@@ -40,7 +41,7 @@ public class HomeController {
     private static Logger logger = Logger.getLogger(HomeController.class);
 
     @Autowired
-    private SmsService smsService;
+    private VerifyCodeManager verifyCodeManager;
     @Autowired
     private MemberService memberService;
     @Autowired
@@ -68,10 +69,10 @@ public class HomeController {
     @RequestMapping(value = "bind-phone", method = RequestMethod.POST)
     @ResponseBody
     public Result bindPhone(LoginMember loginMember, String mobile, String identifier, String code, String latitude, String longitude) {
-//        boolean valid = smsService.validateSmsVerifyCode(identifier, code, mobile);
-//        if (!valid) {
-//            return Result.error("验证码错误");
-//        }
+        boolean valid = verifyCodeManager.validate(mobile, identifier, code);
+        if (!valid) {
+            return Result.error("验证码错误");
+        }
 
         // 绑定手机号
         boolean bind = memberService.bind(loginMember.getId(), BindType.MOBILE, mobile);

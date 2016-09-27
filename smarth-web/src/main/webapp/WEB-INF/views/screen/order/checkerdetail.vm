@@ -71,7 +71,7 @@
                 </div>
             #end
             <div class="ui-read-input">
-                <div class="txt primary tal">$order.remark</div>
+                <div class="txt primary tal">$order.checkupRemark</div>
             </div>
         </div>
         <!-- /.体检报告 -->

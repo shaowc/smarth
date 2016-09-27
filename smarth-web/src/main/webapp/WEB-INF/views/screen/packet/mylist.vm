@@ -4,7 +4,7 @@
     <div class="ui-ensemble">
         <div class="ui-ensemble-bd">
             <div class="dt">
-                <div class="ui-ensemble-img"><img src="images/package-img.jpg"></div>
+                <div class="ui-ensemble-img"><img src="$staticServer.get('images/package-img.jpg')"></div>
             </div>
             <div class="dd primary">
                 <div class="title">$item.name</div>

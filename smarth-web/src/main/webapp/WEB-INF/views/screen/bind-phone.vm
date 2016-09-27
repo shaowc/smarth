@@ -29,6 +29,7 @@
 
 <script>
 
+    #if($_platform =='wexin')
     // 获取地理位置
     wx.ready(function(){
 
@@ -44,6 +45,7 @@
             }
         });
     });
+    #end
     $(function(){
         /**
          * 校验
@@ -73,6 +75,69 @@
         }
 
 
+        /**
+         * 获取验证码方法
+         */
+        function getCode(tel,btn){
+            //按钮
+            var own = btn;
+            var self = this;
+
+            $.ajax({
+                url: '/sms/send.htm',
+                type: 'POST',
+                data: {"mobile": tel},
+                beforeSend:function(){
+                    if($('body').attr('ajaxcode') == 'true' || own.hasClass('btn-disabled')){
+                        return false;
+                    }
+                    $('body').attr('ajaxcode','true');
+                    own.html('获取中');
+                },
+                success:function(json){
+                    //ajax返回的data
+                    console.log(json.data);
+                    $('#hidephone').val(tel);
+                    $('#hidecodekey').val(json.data);
+                    //开启倒计时
+                    btncountdown(own,'获取验证码',60);
+                },
+                error:function(){
+                    $.Tip({'id':'error','content':'获取验证码失败请稍后再试'});
+                    own.html('获取验证码');
+                },
+                complete:function(){
+                    setTimeout(function(){
+                        $('body').removeAttr('ajaxcode');
+                    },1000);
+                }
+            });
+        }
+
+        /**
+         * 倒计时
+         * @param  {[type]} self    [description]
+         * @param  {[type]} oldhtml [description]
+         * @param  {[type]} time    [description]
+         * @return {[type]}         [description]
+         */
+        function btncountdown(self,oldhtml,time){
+            var i = typeof(time) == 'undefined' ? 60 : time ;
+            self.html( i + '秒');
+            self.attr('disabled','disabled');
+            self.addClass('btn-disabled');
+            var sp = setInterval(function(){
+                i--;
+                if(i === 0){
+                    self.removeAttr('disabled').html(oldhtml).removeClass('btn-disabled');
+                    clearInterval(sp);
+                }else{
+                    self.html( i + '秒');
+                }
+            },1000);
+        }
+
+
         //绑定发送校验码按钮
         $('#getcode').on('click',function(){
             var btn = $(this);
@@ -86,18 +151,9 @@
                 $.Tip({'id':'error','content':'请填写正确的手机号'});
                 return;
             }
-            if(btn.hasClass('ui-btn-disabled')){
-                return;
-            }
-            btn.addClass('ui-btn-disabled');
-            //发送验证码请求
-            $.pajax('id2','/sms/send.htm','POST','mobile='+ phone,function(data){
-                //ajax返回的data
-                console.log(data);
 
-                $('#hidephone').val(phone);
-                $('#hidecodekey').val(data);
-            });
+            //发送验证码请求
+            getCode(phone, btn);
 
         });
 
@@ -105,8 +161,8 @@
         //绑定确认按钮
         $('#submit').on('click',function(){
 
-//            if(checkform()){
-            if(true){
+            if(checkform()){
+//            if(true){
                 var param = $('#regform').serializeArray();
                 // var param = $('#regform').serialize();
                 //提交

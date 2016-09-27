@@ -2,8 +2,10 @@ package com.familyan.smarth.pay;
 
 import com.familyan.smarth.domain.MemberWechatDO;
 import com.familyan.smarth.domain.Order;
+import com.familyan.smarth.eventbus.OrderEventListener;
 import com.familyan.smarth.manager.MemberWechatManager;
 import com.familyan.smarth.manager.OrderManager;
+import com.google.common.eventbus.EventBus;
 import com.lotus.wechat.pay.UnifiedorderReq;
 import com.lotus.wechat.pay.UnifiedorderResp;
 import com.lotus.wechat.pay.WechatPayApi;
@@ -36,6 +38,8 @@ public class WechatOrderPay implements OrderPay {
     private OrderManager orderManager;
     @Autowired
     private MemberWechatManager wechatManager;
+    @Autowired
+    private EventBus eventBus;
 
     @Override
     public Map<String, String> unifiedorder(Integer orderId, String ip) {
@@ -116,12 +120,11 @@ public class WechatOrderPay implements OrderPay {
         String outTradeNo = payResult.get("out_trade_no");
         Order order = orderManager.findByOutTradeNo(outTradeNo);
         if (order != null && order.getPayStatus() == 0) {
-            Order updateVo = new Order();
-            updateVo.setId(order.getId());
-            updateVo.setPayStatus(1);
-            updateVo.setStatus(2);
-            updateVo.setGmtPay(new Date());
-            orderManager.modify(updateVo);
+            order.setPayStatus(1);
+            order.setStatus(2);
+            order.setGmtPay(new Date());
+            orderManager.modify(order);
+            eventBus.post(new OrderEventListener.OrderEvent(order, OrderEventListener.OrderEvent.PAIED));
         }
     }
 
